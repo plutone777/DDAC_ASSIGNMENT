@@ -23,19 +23,24 @@ namespace DDAC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(User user, string password)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                user.Password = password;
-                user.Status = "Active";
-                user.CreatedDate = DateTime.Now;
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
 
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                return RedirectToAction("Login");
+                return View(user);
             }
 
-            return View(user);
+            user.Password = password;
+            user.Status = "Active";
+            user.CreatedDate = DateTime.Now;
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("Login");
         }
 
         [HttpGet]

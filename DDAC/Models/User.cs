@@ -31,7 +31,7 @@ namespace DDAC.Models
 
         [Required]
         [StringLength(20)]
-        public string Status { get; set; }
+        public string Status { get; set; } = "Active";
 
         [Required]
         public DateTime CreatedDate { get; set; }
