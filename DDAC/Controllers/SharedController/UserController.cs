@@ -48,5 +48,57 @@ namespace DDAC.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(string email, string password)
+        {
+            var user = _context.Users
+                .FirstOrDefault(u => u.Email == email);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Invalid email or password.");
+                return View();
+            }
+
+            if (user.Password != password)
+            {
+                ModelState.AddModelError("", "Invalid email or password.");
+                return View();
+            }
+
+            if (user.Status != "Active")
+            {
+                ModelState.AddModelError("", "Your account is not active.");
+                return View();
+            }
+
+            // Store logged-in user's information
+            HttpContext.Session.SetInt32("UserID", user.UserID);
+            HttpContext.Session.SetString("FullName", user.FullName);
+            HttpContext.Session.SetString("Email", user.Email);
+            HttpContext.Session.SetString("Role", user.Role);
+
+            if (user.Role == "JobSeeker")
+            {
+                return RedirectToAction("Index", "JobSeeker");
+            }
+            else if (user.Role == "Employer")
+            {
+                return RedirectToAction("Index", "Employer");
+            }
+            else if (user.Role == "CareerAdvisor")
+            {
+                return RedirectToAction("Index", "CareerAdvisor");
+            }
+            else if (user.Role == "Admin")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

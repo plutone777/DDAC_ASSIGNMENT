@@ -25,11 +25,9 @@
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Employer\" />
     <Folder Include="Controllers\CareerAdvisor\" />
-    <Folder Include="Controllers\JobSeeker\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\CareerAdvisor\" />
     <Folder Include="Views\Employer\" />
-    <Folder Include="Views\JobSeeker\" />
   </ItemGroup>
 
   <ItemGroup>
