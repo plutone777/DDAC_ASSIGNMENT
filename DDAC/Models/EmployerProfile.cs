@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DDAC.Models
 {
     public class EmployerProfile
     {
         [Key]
+        [ForeignKey(nameof(User))]
         public int EmployerID { get; set; }
+        public User User { get; set; }
 
         [Required]
         [StringLength(150)]
