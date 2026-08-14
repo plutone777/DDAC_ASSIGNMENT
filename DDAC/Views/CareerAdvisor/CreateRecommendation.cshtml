@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewData["Title"] = "Recommend a program";
+    var jobSeekers = ViewBag.JobSeekers as List<DDAC.Models.User>;
+    var programs = ViewBag.Programs as List<DDAC.Models.TrainingProgram>;
+}
+
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>Recommend a program</h1>
+            <p>Suggest a training program to a Job seeker</p>
+        </div>
+
+        <form asp-action="CreateRecommendation" method="post">
+            <div class="content-card card-padding">
+
+                <div class="form-group">
+                    <label for="jobSeekerId">Job seeker</label>
+                    <select name="jobSeekerId" id="jobSeekerId" class="form-select" required>
+                        <option value="">Select a job seeker</option>
+                        @foreach (var user in jobSeekers)
+                        {
+                            <option value="@user.UserID">@user.FullName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="trainingId">Training program</label>
+                    <select name="trainingId" id="trainingId" class="form-select" required>
+                        <option value="">Select a program</option>
+                        @foreach (var program in programs)
+                        {
+                            <option value="@program.TrainingID">@program.Title — @program.Provider</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Why this program</label>
+                    <textarea name="reason" id="reason" class="form-input" rows="4" required></textarea>
+                </div>
+
+                <div class="action-area">
+                    <a class="secondary-button" asp-action="Recommendations">Cancel</a>
+                    <button type="submit" class="primary-button">Send recommendation</button>
+                </div>
+            </div>
+        </form>
+    </main>
+</div>

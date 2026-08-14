@@ -24,9 +24,7 @@
   <ItemGroup>
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Employer\" />
-    <Folder Include="Controllers\CareerAdvisor\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="Views\CareerAdvisor\" />
     <Folder Include="Views\Employer\" />
   </ItemGroup>
 

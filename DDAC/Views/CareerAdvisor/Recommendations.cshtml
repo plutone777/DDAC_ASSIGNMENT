@@ -1,0 +1,55 @@
+﻿@model List<DDAC.Models.CareerRecommendation>
+@{
+    ViewData["Title"] = "Recommendations";
+    var names = ViewBag.Names as Dictionary<int, string>;
+}
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>Recommendations</h1>
+            <p>Programs you have recommended to job seekers.</p>
+        </div>
+
+        <div class="search-bar">
+            <a class="primary-button" asp-action="CreateRecommendation">New Recommendation</a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h2>No recommendations yet</h2>
+                <p>Suggest a training program to a Job seeker</p>
+            </div>
+        }
+        else
+        {
+            <div class="content-list">
+                @foreach (var item in Model)
+                {
+                    <div class="list-card list-card-hover">
+                        <div class="list-card-header">
+                            <div>
+                                <h3 class="list-card-title">@item.Title</h3>
+                                <p class="list-card-subtitle">
+                                    For @(names.ContainsKey(item.JobSeekerID) ? names[item.JobSeekerID] : "unknown user")
+                                    · @item.DateCreated.ToString("dd MMM yyyy")
+                                </p>
+                            </div>
+                            <span class="tag tag-status">@item.RecommendationType</span>
+                        </div>
+
+                        <p class="description-text">@item.Reason</p>
+
+                        <div class="action-area">
+                            <a class="secondary-button" asp-action="DeleteRecommendation" asp-route-id="@item.RecommendationID">Delete</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </main>
+</div>

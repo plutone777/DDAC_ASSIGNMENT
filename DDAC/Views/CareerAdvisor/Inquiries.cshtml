@@ -1,0 +1,50 @@
+﻿@model List<DDAC.Models.Inquiry>
+@{
+    ViewData["Title"] = "Inquiries";
+}
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>Inquiries</h1>
+            <p>Questions sent to you by job seekers and employers</p>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h2>No inquiries yet</h2>
+                <p>Messages sent to you will appear here</p>
+            </div>
+        }
+        else
+        {
+            <div class="content-list">
+                @foreach (var item in Model)
+                {
+                    <div class="list-card list-card-hover">
+                        <div class="list-card-header">
+                            <div>
+                                <h3 class="list-card-title">@item.Subject</h3>
+                                <p class="list-card-subtitle">@item.CreatedDate.ToString("dd MMM yyyy")</p>
+                            </div>
+                            <span class="tag tag-status">@item.Status</span>
+                        </div>
+
+                        <p class="description-text">@item.Message</p>
+
+                        <div class="action-area">
+                            <a class="secondary-button" asp-action="RespondInquiry" asp-route-id="@item.InquiryID">
+                                @(item.Status == "Resolved" ? "View" : "Respond")
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        }
+    </main>
+</div>
