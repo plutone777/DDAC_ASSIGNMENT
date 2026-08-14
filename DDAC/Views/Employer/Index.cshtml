@@ -1,0 +1,76 @@
+@using System.Collections.Generic
+@{
+    ViewData["Title"] = "Employer Dashboard";
+    var profile = ViewBag.Profile as EmployerProfile;
+    var recentApplications = ViewBag.RecentApplications as List<JobApplication> ?? new();
+    var jobs = ViewBag.JobsById as Dictionary<int, JobVacancy> ?? new();
+    var applicants = ViewBag.ApplicantsById as Dictionary<int, User> ?? new();
+}
+
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell">
+    <partial name="_EmployerSidebar" />
+    <section class="employer-content">
+        @if (TempData["Error"] is string error) { <div class="alert alert-danger">@error</div> }
+        @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+
+        <div class="employer-hero">
+            <div>
+                <span class="employer-eyebrow">Overview</span>
+                <h1>@(profile?.CompanyName ?? "Welcome to your employer workspace")</h1>
+                <p>Manage inclusive opportunities, review candidates, and keep your hiring process moving.</p>
+            </div>
+            <a class="btn btn-light" asp-controller="JobVacancy" asp-action="CreateVacancy">Post a vacancy</a>
+        </div>
+
+        @if (profile is null)
+        {
+            <div class="alert alert-warning d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                <span>Complete your company profile before publishing your first vacancy.</span>
+                <a class="btn btn-sm btn-dark" asp-controller="EmployerProfile" asp-action="EditProfile">Complete profile</a>
+            </div>
+        }
+
+        <div class="employer-stat-grid">
+            <article class="employer-stat"><span>Total vacancies</span><strong>@ViewBag.VacancyCount</strong></article>
+            <article class="employer-stat"><span>Published</span><strong>@ViewBag.PublishedVacancyCount</strong></article>
+            <article class="employer-stat"><span>Applications</span><strong>@ViewBag.ApplicationCount</strong></article>
+            <article class="employer-stat"><span>Upcoming interviews</span><strong>@ViewBag.UpcomingInterviewCount</strong></article>
+        </div>
+
+        <div class="employer-panel mt-4">
+            <div class="employer-panel__header">
+                <div><span class="employer-eyebrow">Candidates</span><h2>Recent applications</h2></div>
+                <a asp-controller="EmployerApplication" asp-action="Applications">View all</a>
+            </div>
+            @if (recentApplications.Count == 0)
+            {
+                <p class="employer-empty">No applications yet. Published vacancies will appear to job seekers.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle employer-table">
+                        <thead><tr><th>Candidate</th><th>Vacancy</th><th>Applied</th><th>Status</th><th></th></tr></thead>
+                        <tbody>
+                        @foreach (var application in recentApplications)
+                        {
+                            applicants.TryGetValue(application.JobSeekerID, out var applicant);
+                            jobs.TryGetValue(application.JobID, out var job);
+                            <tr>
+                                <td>@(applicant?.FullName ?? "Applicant")</td>
+                                <td>@(job?.JobTitle ?? "Vacancy")</td>
+                                <td>@application.ApplicationDate.ToString("dd MMM yyyy")</td>
+                                <td><span class="status-pill">@application.Status</span></td>
+                                <td><a asp-controller="EmployerApplication" asp-action="ApplicationDetails" asp-route-id="@application.ApplicationID">Review</a></td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+

@@ -1,0 +1,14 @@
+@model JobInterview
+@{ ViewData["Title"] = "Schedule Interview"; var job = ViewBag.Job as JobVacancy; var types = ViewBag.InterviewTypes as IReadOnlyList<string> ?? Array.Empty<string>(); }
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+    <div class="employer-page-heading"><div><span class="employer-eyebrow">@(job?.JobTitle ?? "Candidate interview")</span><h1>Schedule interview</h1><p>Set the time, format, and access details for the candidate.</p></div></div>
+    <form asp-action="CreateInterview" method="post" class="employer-panel employer-form">
+        <input asp-for="ApplicationID" type="hidden" /><div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row g-3"><div class="col-md-6"><label asp-for="InterviewDate" class="form-label">Date and time</label><input asp-for="InterviewDate" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" /><span asp-validation-for="InterviewDate" class="text-danger"></span></div><div class="col-md-6"><label asp-for="InterviewType" class="form-label">Interview type</label><select asp-for="InterviewType" class="form-select">@foreach (var type in types) { <option value="@type">@type</option> }</select><span asp-validation-for="InterviewType" class="text-danger"></span></div><div class="col-12"><label asp-for="Location" class="form-label">Location or meeting details</label><input asp-for="Location" class="form-control" placeholder="Office address, meeting URL, or phone instructions" /><span asp-validation-for="Location" class="text-danger"></span></div><div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" rows="4" class="form-control" placeholder="Accessibility arrangements or preparation notes"></textarea><span asp-validation-for="Notes" class="text-danger"></span></div></div>
+        <div class="d-flex gap-2 mt-4"><button class="btn btn-primary" type="submit">Schedule interview</button><a class="btn btn-outline-secondary" asp-action="ApplicationDetails" asp-route-id="@Model.ApplicationID">Cancel</a></div>
+    </form>
+</section></div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
+

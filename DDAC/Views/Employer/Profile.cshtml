@@ -1,0 +1,31 @@
+@model EmployerProfile
+@{
+    ViewData["Title"] = "Company Profile";
+    var user = ViewBag.User as User;
+}
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell">
+    <partial name="_EmployerSidebar" />
+    <section class="employer-content">
+        @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+        @if (TempData["Info"] is string info) { <div class="alert alert-info">@info</div> }
+        <div class="employer-page-heading">
+            <div><span class="employer-eyebrow">Company identity</span><h1>@Model.CompanyName</h1><p>Information shown alongside your vacancies.</p></div>
+            <a class="btn btn-primary" asp-action="EditProfile">Edit profile</a>
+        </div>
+        <div class="employer-panel profile-grid">
+            <div><span>Industry</span><strong>@Model.Industry</strong></div>
+            <div><span>Verification</span><strong class="status-pill">@Model.VerificationStatus</strong></div>
+            <div><span>Contact</span><strong>@(user?.Email ?? "Not available")</strong></div>
+            <div><span>Phone</span><strong>@(user?.PhoneNumber ?? "Not provided")</strong></div>
+            <div class="profile-grid__wide"><span>Address</span><strong>@(string.IsNullOrWhiteSpace(Model.Address) ? "Not provided" : Model.Address)</strong></div>
+            <div class="profile-grid__wide"><span>About</span><p>@(string.IsNullOrWhiteSpace(Model.CompanyDescription) ? "No company description yet." : Model.CompanyDescription)</p></div>
+            @if (Uri.TryCreate(Model.Website, UriKind.Absolute, out var website) &&
+                 (website.Scheme == Uri.UriSchemeHttp || website.Scheme == Uri.UriSchemeHttps))
+            {
+                <div class="profile-grid__wide"><span>Website</span><a href="@website" target="_blank" rel="noopener noreferrer">@website</a></div>
+            }
+        </div>
+    </section>
+</div>

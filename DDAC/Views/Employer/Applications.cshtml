@@ -1,0 +1,21 @@
+@using System.Collections.Generic
+@model IEnumerable<JobApplication>
+@{
+    ViewData["Title"] = "Applications";
+    var jobs = ViewBag.JobsById as Dictionary<int, JobVacancy> ?? new();
+    var applicants = ViewBag.ApplicantsById as Dictionary<int, User> ?? new();
+    var statuses = ViewBag.Statuses as IReadOnlyList<string> ?? Array.Empty<string>();
+}
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+    <div class="employer-page-heading"><div><span class="employer-eyebrow">Candidate pipeline</span><h1>Applications</h1><p>Review applicants across all of your vacancies.</p></div></div>
+    <form method="get" class="employer-filter mb-3"><select name="status" class="form-select" aria-label="Filter by status" onchange="this.form.submit()"><option value="">All statuses</option>@foreach (var status in statuses) { <option value="@status" selected="@(ViewBag.SelectedStatus == status)">@status</option> }</select></form>
+    <div class="employer-panel p-0 overflow-hidden">
+    @if (!Model.Any()) { <div class="employer-empty"><h2>No applications found</h2><p>Applications will appear here when candidates apply.</p></div> }
+    else { <div class="table-responsive"><table class="table align-middle employer-table mb-0"><thead><tr><th>Candidate</th><th>Vacancy</th><th>Applied</th><th>Status</th><th></th></tr></thead><tbody>
+        @foreach (var application in Model) { applicants.TryGetValue(application.JobSeekerID, out var applicant); jobs.TryGetValue(application.JobID, out var job); <tr><td><strong>@(applicant?.FullName ?? "Applicant")</strong><small>@(applicant?.Email ?? "")</small></td><td>@(job?.JobTitle ?? "Vacancy")</td><td>@application.ApplicationDate.ToString("dd MMM yyyy")</td><td><span class="status-pill">@application.Status</span></td><td><a asp-action="ApplicationDetails" asp-route-id="@application.ApplicationID">Review</a></td></tr> }
+    </tbody></table></div> }
+    </div>
+</section></div>
+

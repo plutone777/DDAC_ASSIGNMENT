@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": ["Bash(git *)", "Bash(dotnet *)", "Bash(node *)"],
+    "deny": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"scripts/sprint-log/record-edit.mjs\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"scripts/sprint-log/check-sprint-log.mjs\""
+          }
+        ]
+      }
+    ]
+  }
+}
+

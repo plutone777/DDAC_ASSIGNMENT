@@ -1,0 +1,12 @@
+@model IEnumerable<CareerResource>
+@{ ViewData["Title"] = "Hiring Guidance"; var announcements = ViewBag.Announcements as List<Announcement> ?? new(); }
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+    <div class="employer-page-heading"><div><span class="employer-eyebrow">Inclusive hiring</span><h1>Hiring guidance</h1><p>Published resources from career advisors and platform announcements.</p></div></div>
+    @if (announcements.Count > 0) { <div class="announcement-stack mb-4">@foreach (var announcement in announcements) { <article class="announcement"><span>@announcement.PublishedDate.ToString("dd MMM yyyy")</span><h2>@announcement.Title</h2><p class="preserve-lines">@announcement.Content</p></article> }</div> }
+    <div class="resource-grid">
+    @if (!Model.Any()) { <div class="employer-panel employer-empty"><h2>No guidance published yet</h2><p>New resources from career advisors will appear here.</p></div> }
+    else { @foreach (var resource in Model) { <article class="employer-panel resource-card"><span class="status-pill">@resource.Category</span><h2>@resource.Title</h2><p>@resource.Description</p><small>Published @resource.PublishedDate.ToString("dd MMM yyyy")</small>@if (Uri.TryCreate(resource.ContentURL, UriKind.Absolute, out var resourceUrl) && (resourceUrl.Scheme == Uri.UriSchemeHttp || resourceUrl.Scheme == Uri.UriSchemeHttps)) { <a href="@resourceUrl" target="_blank" rel="noopener noreferrer">Open resource</a> }</article> } }
+    </div>
+</section></div>
