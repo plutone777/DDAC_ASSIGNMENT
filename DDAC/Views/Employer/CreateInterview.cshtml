@@ -2,7 +2,7 @@
 @{ ViewData["Title"] = "Schedule Interview"; var job = ViewBag.Job as JobVacancy; var types = ViewBag.InterviewTypes as IReadOnlyList<string> ?? Array.Empty<string>(); }
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
-<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
     <div class="employer-page-heading"><div><span class="employer-eyebrow">@(job?.JobTitle ?? "Candidate interview")</span><h1>Schedule interview</h1><p>Set the time, format, and access details for the candidate.</p></div></div>
     <form asp-action="CreateInterview" method="post" class="employer-panel employer-form">
         <input asp-for="ApplicationID" type="hidden" /><div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -11,4 +11,3 @@
     </form>
 </section></div>
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }
-

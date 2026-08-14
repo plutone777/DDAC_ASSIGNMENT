@@ -2,8 +2,8 @@
 @{ ViewData["Title"] = "Create Vacancy"; }
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
-<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
     <div class="employer-page-heading"><div><span class="employer-eyebrow">New opportunity</span><h1>Create vacancy</h1><p>Describe the role, its accessibility features, and available accommodations.</p></div></div>
-    <partial name="_VacancyForm" model="Model" />
+    <partial name="~/Views/Employer/_VacancyForm.cshtml" model="Model" />
 </section></div>
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }

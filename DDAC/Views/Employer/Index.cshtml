@@ -10,7 +10,7 @@
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
 <div class="employer-shell">
-    <partial name="_EmployerSidebar" />
+    <partial name="~/Views/Employer/_EmployerSidebar.cshtml" />
     <section class="employer-content">
         @if (TempData["Error"] is string error) { <div class="alert alert-danger">@error</div> }
         @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
@@ -73,4 +73,3 @@
         </div>
     </section>
 </div>
-

@@ -2,9 +2,8 @@
 @{ ViewData["Title"] = "Inquiry Details"; var advisor = ViewBag.Advisor as User; }
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
-<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
     @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
     <div class="employer-page-heading"><div><span class="status-pill">@Model.Status</span><h1>@Model.Subject</h1><p>Sent to @(advisor?.FullName ?? "career advisor") on @Model.CreatedDate.ToString("dd MMM yyyy")</p></div><a class="btn btn-outline-secondary" asp-action="Inquiries">Back to inquiries</a></div>
     <article class="employer-panel conversation"><div class="conversation__message"><span>Your question</span><p class="preserve-lines">@Model.Message</p></div><div class="conversation__message conversation__message--response"><span>Advisor response</span>@if (string.IsNullOrWhiteSpace(Model.Response)) { <p class="text-muted">Awaiting a response from the advisor.</p> } else { <p class="preserve-lines">@Model.Response</p>@if (Model.ResolvedDate.HasValue) { <small>Resolved @Model.ResolvedDate.Value.ToString("dd MMM yyyy")</small> } }</div></article>
 </section></div>
-

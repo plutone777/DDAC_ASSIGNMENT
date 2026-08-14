@@ -37,3 +37,8 @@
 - What changed: Added a shared Employer view-root constant and updated profile, vacancy, application, interview, and inquiry actions to return explicit files from `Views/Employer`; added the routing lesson to the project log and cleared the resolved LocalDB blocker.
 - Why: Live testing showed that buttons reached the correct controllers, but MVC searched controller-named folders rather than the centralized Employer view folder required by the project structure.
 - Status: All affected normal and validation-error view returns now target existing Employer files, and the project compiles with zero errors. A server restart and fresh live smoke test are required to load and exercise the new controller assembly.
+
+### 2026-08-15 — Fix centralized Employer partial discovery
+- What changed: Updated all Employer pages to reference the centralized sidebar partial by rooted path and did the same for the shared vacancy form.
+- Why: Runtime testing showed that Razor resolves partials independently from their containing view and was still searching controller-named folders.
+- Status: All Employer feature partial references now point directly to existing files under `Views/Employer`; compilation validation follows this change.

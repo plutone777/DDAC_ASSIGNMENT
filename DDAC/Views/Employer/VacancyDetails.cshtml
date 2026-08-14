@@ -2,7 +2,7 @@
 @{ ViewData["Title"] = "Vacancy Details"; }
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
-<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
     @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
     <div class="employer-page-heading"><div><span class="status-pill">@Model.Status</span><h1>@Model.JobTitle</h1><p>@Model.EmploymentType · @(string.IsNullOrWhiteSpace(Model.Location) ? "Location flexible" : Model.Location)</p></div><div class="d-flex gap-2"><a class="btn btn-outline-secondary" asp-action="Vacancies">Back</a><a class="btn btn-primary" asp-action="EditVacancy" asp-route-id="@Model.JobID">Edit vacancy</a></div></div>
     <div class="employer-detail-grid">
@@ -10,4 +10,3 @@
         <aside class="employer-panel employer-detail-aside"><div><span>Applications</span><strong>@ViewBag.ApplicationCount</strong></div><div><span>Salary</span><strong>@Model.Salary.ToString("C")</strong></div><div><span>Posted</span><strong>@Model.PostedDate.ToString("dd MMM yyyy")</strong></div><div><span>Closes</span><strong>@Model.ClosingDate.ToString("dd MMM yyyy")</strong></div><a class="btn btn-outline-primary w-100" asp-controller="EmployerApplication" asp-action="Applications">Review applications</a></aside>
     </div>
 </section></div>
-

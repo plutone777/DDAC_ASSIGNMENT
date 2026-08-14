@@ -3,7 +3,7 @@
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
 <div class="employer-shell">
-    <partial name="_EmployerSidebar" />
+    <partial name="~/Views/Employer/_EmployerSidebar.cshtml" />
     <section class="employer-content">
         @if (TempData["Info"] is string info) { <div class="alert alert-info">@info</div> }
         <div class="employer-page-heading"><div><span class="employer-eyebrow">Company identity</span><h1>Edit company profile</h1><p>Keep your public employer information current and clear.</p></div></div>
@@ -21,4 +21,3 @@
     </section>
 </div>
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }
-

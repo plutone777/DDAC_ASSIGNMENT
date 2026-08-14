@@ -2,7 +2,7 @@
 @{ ViewData["Title"] = "Hiring Guidance"; var announcements = ViewBag.Announcements as List<Announcement> ?? new(); }
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
-<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
     <div class="employer-page-heading"><div><span class="employer-eyebrow">Inclusive hiring</span><h1>Hiring guidance</h1><p>Published resources from career advisors and platform announcements.</p></div></div>
     @if (announcements.Count > 0) { <div class="announcement-stack mb-4">@foreach (var announcement in announcements) { <article class="announcement"><span>@announcement.PublishedDate.ToString("dd MMM yyyy")</span><h2>@announcement.Title</h2><p class="preserve-lines">@announcement.Content</p></article> }</div> }
     <div class="resource-grid">

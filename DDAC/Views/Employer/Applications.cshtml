@@ -8,7 +8,7 @@
 }
 @section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
 
-<div class="employer-shell"><partial name="_EmployerSidebar" /><section class="employer-content">
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
     <div class="employer-page-heading"><div><span class="employer-eyebrow">Candidate pipeline</span><h1>Applications</h1><p>Review applicants across all of your vacancies.</p></div></div>
     <form method="get" class="employer-filter mb-3"><select name="status" class="form-select" aria-label="Filter by status" onchange="this.form.submit()"><option value="">All statuses</option>@foreach (var status in statuses) { <option value="@status" selected="@(ViewBag.SelectedStatus == status)">@status</option> }</select></form>
     <div class="employer-panel p-0 overflow-hidden">
@@ -18,4 +18,3 @@
     </tbody></table></div> }
     </div>
 </section></div>
-
