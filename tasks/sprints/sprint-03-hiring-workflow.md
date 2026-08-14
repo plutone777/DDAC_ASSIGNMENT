@@ -27,3 +27,8 @@
 - What changed: Added application review, status update, interview scheduling, hiring guidance, inquiry controllers and views, layout integration, and .NET CI.
 - Why: This completes the employer feature scope across candidate review, inclusive hiring support, and advisor communication.
 - Status: The .NET 10 solution builds with zero errors. Existing shared-model nullability warnings remain, and the NuGet vulnerability feed was unreachable in the restricted environment. No automated test project exists, so database-backed behavior was not executed.
+
+### 2026-08-15 — Run live smoke-test preflight
+- What changed: No application code changed; checked the .NET and LocalDB tooling and attempted to initialize the tracked Entity Framework schema.
+- Why: A populated local database is required before launching and exercising the Employer workflow in a browser.
+- Status: Failed once during database initialization because LocalDB could not create the automatic `MSSQLLocalDB` instance. Per the system-testing protocol, the test stopped without retries or fixes; server startup, HTTP routes, login, and Employer pages remain unverified in this pass.

@@ -10,7 +10,7 @@
 
 **Sprint:** Sprint 01 — Employer Foundation  
 **Goal:** Deliver the employer dashboard and profile foundation, then continue through the tracked employer feature sprints.  
-**Blocking:** None
+**Blocking:** Live smoke testing is blocked because the local `MSSQLLocalDB` automatic instance cannot be created or started.
 
 ## Tech Stack
 
@@ -27,4 +27,3 @@ Preserve the established ASP.NET Core MVC structure
 - [x] Session login implemented
 - [ ] First deploy done
 - [x] Database migrations tracked
-
