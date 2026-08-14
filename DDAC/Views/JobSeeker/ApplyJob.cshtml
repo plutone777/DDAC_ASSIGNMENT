@@ -1,0 +1,150 @@
+﻿@model DDAC.Models.JobApplication
+
+@{
+    ViewData["Title"] = "Apply for Job";
+    var job = ViewBag.Job as DDAC.Models.JobVacancy;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        <a asp-controller="JobSeeker"
+           asp-action="JobDetails"
+           asp-route-id="@job.JobID"
+           class="back-link">
+            ← Back to Job
+        </a>
+
+
+        <div class="page-header">
+
+            <h1>Apply for Job</h1>
+
+            <p>
+                Submit your application for this position.
+            </p>
+
+        </div>
+
+
+        <div class="content-card card-padding">
+
+
+            <!-- JOB INFORMATION -->
+
+            <div class="content-section">
+
+                <h2>@job.JobTitle</h2>
+
+                @if (!string.IsNullOrWhiteSpace(job.Location))
+                {
+                    <p>
+                        📍 @job.Location
+                    </p>
+                }
+
+                <p>
+                    @job.EmploymentType
+                </p>
+
+            </div>
+
+
+            <!-- RESUME -->
+
+            <div class="content-section">
+
+                <h2>Your Resume</h2>
+
+                <p>
+                    Your current resume from your profile will be
+                    submitted with this application.
+                </p>
+
+                <br />
+
+                <a asp-controller="JobSeekerProfile"
+                   asp-action="ViewResume"
+                   class="secondary-button"
+                   target="_blank">
+                    View Resume
+                </a>
+
+            </div>
+
+
+            <!-- APPLICATION FORM -->
+
+            <form asp-controller="JobSeekerApplication"
+                  asp-action="Apply"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <!-- Job ID -->
+                <input type="hidden"
+                       name="jobId"
+                       value="@job.JobID" />
+
+
+                <!-- COVER LETTER -->
+
+                <div class="content-section">
+
+                    <h2>Cover Letter</h2>
+
+                    <p>
+                        Tell the employer about yourself and explain
+                        why you are suitable for this position.
+                    </p>
+
+
+                    <textarea name="coverLetter"
+                              class="form-input"
+                              rows="10"
+                              placeholder="Write your cover letter here...">@Model.CoverLetter</textarea>
+
+
+                    @Html.ValidationMessage(
+                        "CoverLetter",
+                        "",
+                        new { @class = "validation-message" }
+                    )
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="action-area">
+
+                    <a asp-controller="JobSeeker"
+                       asp-action="JobDetails"
+                       asp-route-id="@job.JobID"
+                       class="secondary-button">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="primary-button">
+                        Submit Application
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>

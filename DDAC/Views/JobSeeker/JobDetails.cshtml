@@ -1,0 +1,251 @@
+﻿@model DDAC.Models.JobVacancy
+
+@{
+    ViewData["Title"] = "Job Details";
+    var employer = ViewBag.Employer as DDAC.Models.EmployerProfile;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        @if (TempData["ApplicationError"] != null)
+        {
+            <div class="alert-message error-message">
+                @TempData["ApplicationError"]
+            </div>
+        }
+
+        @if (TempData["ApplicationSuccess"] != null)
+        {
+            <div class="alert-message success-message">
+                @TempData["ApplicationSuccess"]
+            </div>
+        }
+
+        <a asp-controller="JobSeeker"
+           asp-action="BrowseJobs"
+           class="back-link">
+            ← Back to Jobs
+        </a>
+
+
+        <div class="content-card card-padding job-details-card">
+
+            <div class="job-details-header">
+
+                <div>
+                    <h1>@Model.JobTitle</h1>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Location))
+                    {
+                        <p class="job-details-location">
+                            📍 @Model.Location
+                        </p>
+                    }
+                </div>
+
+                <span class="tag tag-status">
+                    @Model.EmploymentType
+                </span>
+
+            </div>
+
+            <div class="detail-grid">
+
+                <div class="detail-box">
+                    <span class="detail-label">Salary</span>
+                    <span class="detail-value">
+                        RM @Model.Salary.ToString("N2")
+                    </span>
+                </div>
+
+                <div class="detail-box">
+                    <span class="detail-label">Employment</span>
+                    <span class="detail-value">
+                        @Model.EmploymentType
+                    </span>
+                </div>
+
+                <div class="detail-box">
+                    <span class="detail-label">Posted</span>
+                    <span class="detail-value">
+                        @Model.PostedDate.ToString("dd MMM yyyy")
+                    </span>
+                </div>
+
+                <div class="detail-box">
+                    <span class="detail-label">Closing Date</span>
+                    <span class="detail-value">
+                        @Model.ClosingDate.ToString("dd MMM yyyy")
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="content-section">
+
+                <h2>Job Description</h2>
+
+                <p>
+                    @Model.Description
+                </p>
+
+            </div>
+
+            <div class="content-section">
+
+                <h2>Accessibility Features</h2>
+
+                @if (!string.IsNullOrWhiteSpace(Model.AccessibilityFeatures))
+                {
+                    <div class="tag-list">
+
+                        @foreach (var feature in Model.AccessibilityFeatures
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <span class="tag">
+                                @feature.Trim()
+                            </span>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <p class="no-information">
+                        No accessibility features specified.
+                    </p>
+                }
+
+            </div>
+
+            <div class="content-section">
+
+                <h2>Accommodations Available</h2>
+
+                @if (!string.IsNullOrWhiteSpace(Model.AccommodationsAvailable))
+                {
+                    <div class="tag-list">
+
+                        @foreach (var accommodation in Model.AccommodationsAvailable
+                            .Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <span class="tag">
+                                @accommodation.Trim()
+                            </span>
+                        }
+
+                    </div>
+                }
+                else
+                {
+                    <p class="no-information">
+                        No accommodations specified.
+                    </p>
+                }
+
+            </div>
+
+            <div class="content-section">
+
+                <h2>Employer</h2>
+
+                @if (employer != null)
+                {
+                    <div class="employer-card">
+
+                        <div class="employer-icon">
+                            🏢
+                        </div>
+
+                        <div class="employer-info">
+
+                            <h3>
+                                @employer.CompanyName
+                            </h3>
+
+                            @if (!string.IsNullOrWhiteSpace(employer.Industry))
+                            {
+                                <p class="employer-industry">
+                                    @employer.Industry
+                                </p>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(employer.CompanyDescription))
+                            {
+                                <p class="employer-description">
+                                    @employer.CompanyDescription
+                                </p>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(employer.Address) ||
+                                 !string.IsNullOrWhiteSpace(employer.Website))
+                            {
+                                <div class="detail-list">
+
+                                    @if (!string.IsNullOrWhiteSpace(employer.Address))
+                                    {
+                                        <div class="detail-item">
+                                            <strong>Address:</strong>
+                                            @employer.Address
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(employer.Website))
+                                    {
+                                        <div class="detail-item">
+                                            <strong>Website:</strong>
+
+                                            <a href="@employer.Website"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                @employer.Website
+                                            </a>
+                                        </div>
+                                    }
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <p class="no-information">
+                        Employer information is not available.
+                    </p>
+                }
+
+            </div>
+
+            <div class="action-area">
+
+                <a asp-controller="JobSeekerApplication"
+                   asp-action="Apply"
+                   asp-route-jobId="@Model.JobID"
+                   class="primary-button">
+                    Apply for this Job
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>

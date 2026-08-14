@@ -25,12 +25,15 @@
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Employer\" />
     <Folder Include="Controllers\CareerAdvisor\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\CareerAdvisor\" />
     <Folder Include="Views\Employer\" />
+    <Folder Include="wwwroot\uploads\resumes\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="4.0.102.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">

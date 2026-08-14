@@ -9,7 +9,7 @@ namespace DDAC.Models
         [ForeignKey(nameof(User))]
         public int JobSeekerID { get; set; }
 
-        public User User { get; set; }
+        public User? User { get; set; }
 
         [StringLength(255)]
         public string? CareerGoal { get; set; }

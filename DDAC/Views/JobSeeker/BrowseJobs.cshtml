@@ -1,0 +1,249 @@
+﻿@model IEnumerable<DDAC.Models.JobVacancy>
+
+@{
+    ViewData["Title"] = "Browse Jobs";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <!-- Sidebar -->
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <!-- Main Content -->
+    <main class="jobseeker-main">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Browse Jobs</h1>
+
+            <p>
+                Find job opportunities that match your skills and interests.
+            </p>
+        </div>
+
+
+        <!-- Search / Filters -->
+        <form asp-controller="JobSeeker"
+              asp-action="BrowseJobs"
+              method="get"
+              class="search-bar">
+
+            <input type="text"
+                   name="search"
+                   class="search-input"
+                   placeholder="Search for jobs..."
+                   aria-label="Search for jobs"
+                   value="@ViewBag.Search" />
+
+            <select class="form-select"
+                    name="employmentType">
+
+                <option value="">All Employment Types</option>
+
+                @foreach (var type in ViewBag.EmploymentTypes)
+                {
+                    <option value="@type"
+                            selected="@(ViewBag.SelectedEmploymentType == type)">
+                        @type
+                    </option>
+                }
+
+            </select>
+
+
+            <select class="form-select"
+                    name="accessibility">
+
+                <option value="">All Accessibility Features</option>
+
+                @foreach (var feature in ViewBag.AccessibilityFeatures)
+                {
+                    <option value="@feature"
+                            selected="@(ViewBag.SelectedAccessibility == feature)">
+                        @feature
+                    </option>
+                }
+
+            </select>
+
+
+            <select class="form-select"
+                    name="accommodation">
+
+                <option value="">All Accommodations</option>
+
+                @foreach (var accommodation in ViewBag.Accommodations)
+                {
+                    <option value="@accommodation"
+                            selected="@(ViewBag.SelectedAccommodation == accommodation)">
+                        @accommodation
+                    </option>
+                }
+
+            </select>
+
+
+            <button type="submit"
+                    class="primary-button">
+                Search
+            </button>
+
+        </form>
+
+
+        <!-- Job List -->
+        <div class="content-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var job in Model)
+                {
+                    <a asp-controller="JobSeeker"
+                       asp-action="JobDetails"
+                       asp-route-id="@job.JobID"
+                       class="list-card list-card-hover">
+
+                        <!-- Job Header -->
+                        <div class="list-card-header">
+
+                            <div>
+                                <h2 class="list-card-title">
+                                    @job.JobTitle
+                                </h2>
+
+                                @if (!string.IsNullOrWhiteSpace(job.Location))
+                                {
+                                    <p class="list-card-subtitle">
+                                        📍 @job.Location
+                                    </p>
+                                }
+                            </div>
+
+
+                            @if (!string.IsNullOrWhiteSpace(job.EmploymentType))
+                            {
+                                <span class="tag tag-status">
+                                    @job.EmploymentType
+                                </span>
+                            }
+
+                        </div>
+
+
+                        <!-- Description -->
+                        <p class="description-text job-description">
+                            @job.Description
+                        </p>
+
+
+                        <!-- Accessibility Features -->
+                        @if (!string.IsNullOrWhiteSpace(job.AccessibilityFeatures))
+                        {
+                            <div class="job-accessibility-section">
+
+                                <span class="job-label">
+                                    Accessibility Features
+                                </span>
+
+                                <div class="tag-list">
+
+                                    @foreach (var feature in job.AccessibilityFeatures
+                                        .Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <span class="tag">
+                                            @feature.Trim()
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+                        }
+
+
+                        <!-- Accommodations -->
+                        @if (!string.IsNullOrWhiteSpace(job.AccommodationsAvailable))
+                        {
+                            <div class="job-accessibility-section">
+
+                                <span class="job-label">
+                                    Accommodations Available
+                                </span>
+
+                                <div class="tag-list">
+
+                                    @foreach (var accommodation in job.AccommodationsAvailable
+                                        .Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                    {
+                                        <span class="tag">
+                                            @accommodation.Trim()
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+                        }
+
+
+                        <!-- Job Information -->
+                        <div class="job-card-details">
+
+                            <span class="detail-item">
+                                <strong>Salary:</strong>
+                                RM @job.Salary.ToString("N2")
+                            </span>
+
+                            <span class="detail-item">
+                                <strong>Posted:</strong>
+                                @job.PostedDate.ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+
+                        <!-- Footer -->
+                        <div class="job-card-footer">
+
+                            <span>
+                                Closing:
+                                @job.ClosingDate.ToString("dd MMM yyyy")
+                            </span>
+
+                            <span class="view-job">
+                                View Details →
+                            </span>
+
+                        </div>
+
+                    </a>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h2>No jobs available</h2>
+
+                    <p>
+                        There are currently no job vacancies available.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>

@@ -1,0 +1,255 @@
+﻿.profile-form-container {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.form-section {
+    padding: 25px 0;
+    border-bottom: 1px solid #e2e6ea;
+}
+
+    .form-section:first-child {
+        padding-top: 0;
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+    }
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #3f4852;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+.validation-message {
+    display: block;
+    margin-top: 6px;
+    color: #d9534f;
+    font-size: 13px;
+}
+
+.skill-input-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 170px 110px;
+    gap: 10px;
+    width: 100%;
+}
+
+.skill-search-wrapper {
+    position: relative;
+    min-width: 0;
+    width: 100%;
+}
+
+    .skill-search-wrapper .form-control {
+        width: 100%;
+    }
+
+.skill-level {
+    width: 170px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.add-skill-button {
+    width: 110px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.skill-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: #ffffff;
+    border: 1px solid #dce1e6;
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.skill-suggestion {
+    padding: 10px 14px;
+    color: #444;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+    .skill-suggestion:hover {
+        background-color: #f1f3f5;
+    }
+
+.selected-skills {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.selected-skill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background-color: #f8f9fa;
+    border: 1px solid #dce1e6;
+    border-radius: 7px;
+}
+
+.selected-skill-name {
+    flex: 1;
+    color: #303740;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.selected-skill-level {
+    padding: 5px 9px;
+    background-color: #eef1f4;
+    border: 1px solid #dce1e6;
+    border-radius: 5px;
+    color: #4d5965;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.remove-skill {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: #737b84;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+    .remove-skill:hover {
+        color: #303740;
+    }
+
+.resume-upload-box {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px dashed #cbd1d8;
+    border-radius: 8px;
+}
+
+.resume-upload-content {
+    flex: 1;
+}
+
+.resume-upload-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #303740;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.resume-upload-content p {
+    margin: 0 0 10px;
+    color: #888f98;
+    font-size: 13px;
+}
+
+.resume-input {
+    font-size: 13px;
+}
+
+.current-resume {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 18px;
+    margin-top: 15px;
+    border: 1px solid #dce1e6;
+    border-radius: 8px;
+}
+
+.current-resume-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+    .current-resume-info strong {
+        color: #303740;
+        font-size: 14px;
+    }
+
+.view-resume-button {
+    padding: 9px 15px;
+    background-color: #ffffff;
+    border: 1px solid #dce1e6;
+    border-radius: 6px;
+    color: #4d5965;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .view-resume-button:hover {
+        background-color: #f1f3f5;
+    }
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 25px;
+}
+
+@media (max-width: 768px) {
+    .profile-form-container {
+        max-width: none;
+    }
+
+    .skill-input-container {
+        flex-direction: column;
+    }
+
+    .skill-search-wrapper,
+    .skill-level,
+    .add-skill-button {
+        width: 100%;
+    }
+
+    .current-resume {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .view-resume-button {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .selected-skill {
+        flex-wrap: wrap;
+    }
+
+    .selected-skill-name {
+        min-width: 100%;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+}

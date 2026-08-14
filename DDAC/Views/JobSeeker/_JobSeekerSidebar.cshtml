@@ -1,0 +1,48 @@
+﻿<aside class="jobseeker-sidebar">
+
+    <div class="sidebar-logo">
+        <h2>Job Portal</h2>
+        <p>Job Seeker</p>
+    </div>
+
+    <nav class="sidebar-nav">
+
+        <a asp-controller="JobSeeker"
+           asp-action="Index"
+           class="nav-button">
+            Home
+        </a>
+
+        <a asp-controller="JobSeekerProfile"
+           asp-action="EditProfile"
+           class="nav-button">
+            Edit Profile
+        </a>
+
+        <a asp-controller="JobSeeker"
+           asp-action="BrowseJobs"
+           class="nav-button">
+            Browse Jobs
+        </a>
+
+        <a asp-controller="JobSeeker"
+           asp-action="MyApplications"
+           class="nav-button">
+            Track Applications
+        </a>
+
+        <a asp-controller="JobSeeker"
+           asp-action="Information"
+           class="nav-button">
+            Get More Information
+        </a>
+
+        <a asp-controller="JobSeeker"
+           asp-action="Inquiry"
+           class="nav-button">
+            Submit Inquiry
+        </a>
+
+    </nav>
+
+</aside>

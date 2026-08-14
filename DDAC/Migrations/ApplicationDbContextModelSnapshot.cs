@@ -58,10 +58,7 @@ namespace DDAC.Migrations
             modelBuilder.Entity("DDAC.Models.CareerAdvisorProfile", b =>
                 {
                     b.Property<int>("AdvisorID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdvisorID"));
 
                     b.Property<string>("Bio")
                         .IsRequired()
@@ -212,10 +209,7 @@ namespace DDAC.Migrations
             modelBuilder.Entity("DDAC.Models.EmployerProfile", b =>
                 {
                     b.Property<int>("EmployerID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployerID"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -643,6 +637,28 @@ namespace DDAC.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("DDAC.Models.CareerAdvisorProfile", b =>
+                {
+                    b.HasOne("DDAC.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("AdvisorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DDAC.Models.EmployerProfile", b =>
+                {
+                    b.HasOne("DDAC.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("EmployerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DDAC.Models.JobSeekerProfile", b =>

@@ -1,0 +1,107 @@
+﻿@model IEnumerable<DDAC.Models.CareerResource>
+
+@{
+    ViewData["Title"] = "Career Information";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <!-- Sidebar -->
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <!-- Main Content -->
+    <main class="jobseeker-main">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Career Information</h1>
+
+            <p>
+                Explore useful resources to help you develop your career
+                and prepare for your future.
+            </p>
+        </div>
+
+
+        <!-- Resources -->
+        <div class="content-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var resource in Model)
+                {
+                    <div class="list-card">
+
+                        <!-- Resource Header -->
+                        <div class="list-card-header">
+
+                            <div>
+                                <h2 class="list-card-title">
+                                    @resource.Title
+                                </h2>
+                            </div>
+
+                            <span class="tag tag-status">
+                                @resource.Category
+                            </span>
+
+                        </div>
+
+
+                        <!-- Description -->
+                        <p class="description-text">
+                            @resource.Description
+                        </p>
+
+
+                        <!-- Footer -->
+                        <div class="job-card-footer">
+
+                            <span>
+                                Published
+                                @resource.PublishedDate.ToString("dd MMM yyyy")
+                            </span>
+
+                            @if (!string.IsNullOrWhiteSpace(resource.ContentURL))
+                            {
+                                <a href="@resource.ContentURL"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="view-job">
+                                    View Resource →
+                                </a>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h2>No resources available</h2>
+
+                    <p>
+                        There are currently no career resources available.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>
