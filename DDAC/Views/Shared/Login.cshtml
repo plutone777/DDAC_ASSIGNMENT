@@ -4,6 +4,11 @@
 
 <h2>Login</h2>
 
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger" role="alert">@error</div>
+}
+
 <form asp-action="Login" method="post">
 
     <div asp-validation-summary="All" class="text-danger"></div>

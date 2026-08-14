@@ -14,6 +14,11 @@ Append-only record of user corrections and durable process improvements.
 **Rule:** When shared feature partials live outside the default controller view folder, reference them with rooted paths such as `~/Views/Employer/_EmployerSidebar.cshtml` from every consuming view.
 **Why:** Main-view routing and partial-view routing are separate discovery operations, so both must be explicit when using a centralized feature folder.
 
+### 2026-08-15 — Consume redirect messages at their destination
+**Problem:** The Employer authorization redirect stored an error in `TempData`, but the login page did not render it, so the one-time message appeared after a successful login on the Employer dashboard.
+**Rule:** Render redirect feedback on the destination page so `TempData` is consumed during the request where the message is relevant.
+**Why:** Unconsumed `TempData` survives redirects and can present stale, misleading feedback after the underlying condition has been resolved.
+
 ## Internalized
 
 <!-- Move a lesson here only after it has not been violated for at least two sprints. -->

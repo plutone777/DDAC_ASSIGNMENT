@@ -42,3 +42,8 @@
 - What changed: Updated all Employer pages to reference the centralized sidebar partial by rooted path and did the same for the shared vacancy form.
 - Why: Runtime testing showed that Razor resolves partials independently from their containing view and was still searching controller-named folders.
 - Status: All Employer feature partial references now point directly to existing files under `Views/Employer`; compilation validation follows this change.
+
+### 2026-08-15 — Correct stale sign-in feedback
+- What changed: Added rendering for Employer authorization feedback on the shared login page.
+- Why: The login page previously left the one-time redirect message unconsumed, causing it to appear incorrectly on the dashboard after successful Employer authentication.
+- Status: The sign-in prompt now appears before authentication and is consumed on the login page instead of following the user into the Employer workspace.
