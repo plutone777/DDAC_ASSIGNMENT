@@ -35,7 +35,7 @@ public class EmployerInquiryController : EmployerControllerBase
             .AsNoTracking()
             .Where(user => advisorIds.Contains(user.UserID))
             .ToDictionaryAsync(user => user.UserID);
-        return View(inquiries);
+        return View(EmployerViewRoot + "Inquiries.cshtml", inquiries);
     }
 
     [HttpGet]
@@ -47,7 +47,7 @@ public class EmployerInquiryController : EmployerControllerBase
         }
 
         await PopulateAdvisorOptions();
-        return View(new Inquiry
+        return View(EmployerViewRoot + "CreateInquiry.cshtml", new Inquiry
         {
             Subject = string.Empty,
             Message = string.Empty,
@@ -89,7 +89,7 @@ public class EmployerInquiryController : EmployerControllerBase
         if (!ModelState.IsValid)
         {
             await PopulateAdvisorOptions(input.AdvisorID);
-            return View(input);
+            return View(EmployerViewRoot + "CreateInquiry.cshtml", input);
         }
 
         input.UserID = employerId.Value;
@@ -124,7 +124,7 @@ public class EmployerInquiryController : EmployerControllerBase
         ViewBag.Advisor = await _context.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.UserID == inquiry.AdvisorID);
-        return View(inquiry);
+        return View(EmployerViewRoot + "InquiryDetails.cshtml", inquiry);
     }
 
     private async Task PopulateAdvisorOptions(int? selectedAdvisorId = null)
@@ -143,4 +143,3 @@ public class EmployerInquiryController : EmployerControllerBase
         ViewBag.AdvisorOptions = new SelectList(advisors, "Id", "Label", selectedAdvisorId);
     }
 }
-

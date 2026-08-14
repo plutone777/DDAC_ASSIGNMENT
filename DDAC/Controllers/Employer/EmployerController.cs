@@ -6,6 +6,7 @@ namespace DDAC.Controllers.Employer;
 
 public abstract class EmployerControllerBase : Controller
 {
+    protected const string EmployerViewRoot = "~/Views/Employer/";
     protected const string EmployerRole = "Employer";
     protected const string ActiveStatus = "Active";
     protected const string PublishedStatus = "Published";
@@ -122,4 +123,3 @@ public class EmployerController : EmployerControllerBase
         return View(resources);
     }
 }
-

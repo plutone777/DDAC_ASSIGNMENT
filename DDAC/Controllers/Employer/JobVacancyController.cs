@@ -34,7 +34,9 @@ public class JobVacancyController : EmployerControllerBase
 
         ViewBag.SelectedStatus = status;
         ViewBag.Statuses = VacancyStatuses;
-        return View(await query.OrderByDescending(vacancy => vacancy.PostedDate).ToListAsync());
+        return View(
+            EmployerViewRoot + "Vacancies.cshtml",
+            await query.OrderByDescending(vacancy => vacancy.PostedDate).ToListAsync());
     }
 
     [HttpGet]
@@ -46,7 +48,7 @@ public class JobVacancyController : EmployerControllerBase
         }
 
         ViewBag.Statuses = VacancyStatuses;
-        return View(new JobVacancy
+        return View(EmployerViewRoot + "CreateVacancy.cshtml", new JobVacancy
         {
             JobTitle = string.Empty,
             Description = string.Empty,
@@ -74,7 +76,7 @@ public class JobVacancyController : EmployerControllerBase
         if (!ModelState.IsValid)
         {
             ViewBag.Statuses = VacancyStatuses;
-            return View(input);
+            return View(EmployerViewRoot + "CreateVacancy.cshtml", input);
         }
 
         input.EmployerID = employerId.Value;
@@ -102,7 +104,7 @@ public class JobVacancyController : EmployerControllerBase
         }
 
         ViewBag.Statuses = VacancyStatuses;
-        return View(vacancy);
+        return View(EmployerViewRoot + "EditVacancy.cshtml", vacancy);
     }
 
     [HttpPost]
@@ -130,7 +132,7 @@ public class JobVacancyController : EmployerControllerBase
             input.EmployerID = employerId.Value;
             input.PostedDate = existing.PostedDate;
             ViewBag.Statuses = VacancyStatuses;
-            return View(input);
+            return View(EmployerViewRoot + "EditVacancy.cshtml", input);
         }
 
         existing.JobTitle = input.JobTitle;
@@ -165,7 +167,7 @@ public class JobVacancyController : EmployerControllerBase
 
         ViewBag.ApplicationCount = await _context.JobApplications
             .CountAsync(application => application.JobID == vacancy.JobID);
-        return View(vacancy);
+        return View(EmployerViewRoot + "VacancyDetails.cshtml", vacancy);
     }
 
     private async Task<JobVacancy?> FindOwnedVacancy(int id, int employerId, bool tracking)
@@ -218,4 +220,3 @@ public class JobVacancyController : EmployerControllerBase
         }
     }
 }
-

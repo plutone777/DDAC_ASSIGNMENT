@@ -52,7 +52,7 @@ public class EmployerApplicationController : EmployerControllerBase
         ViewBag.Statuses = ApplicationStatuses;
         ViewBag.SelectedStatus = status;
 
-        return View(applications);
+        return View(EmployerViewRoot + "Applications.cshtml", applications);
     }
 
     [HttpGet]
@@ -81,7 +81,7 @@ public class EmployerApplicationController : EmployerControllerBase
             .ToListAsync();
         ViewBag.Statuses = ApplicationStatuses;
 
-        return View(result.Value.Application);
+        return View(EmployerViewRoot + "ApplicationDetails.cshtml", result.Value.Application);
     }
 
     [HttpPost]
@@ -137,7 +137,7 @@ public class EmployerApplicationController : EmployerControllerBase
         ViewBag.Application = result.Value.Application;
         ViewBag.Job = result.Value.Job;
         ViewBag.InterviewTypes = InterviewTypes;
-        return View(new JobInterview
+        return View(EmployerViewRoot + "CreateInterview.cshtml", new JobInterview
         {
             ApplicationID = applicationId,
             InterviewDate = DateTime.Now.AddDays(1),
@@ -196,7 +196,7 @@ public class EmployerApplicationController : EmployerControllerBase
             ViewBag.Application = result.Value.Application;
             ViewBag.Job = result.Value.Job;
             ViewBag.InterviewTypes = InterviewTypes;
-            return View(input);
+            return View(EmployerViewRoot + "CreateInterview.cshtml", input);
         }
 
         input.Status = "Scheduled";
@@ -224,4 +224,3 @@ public class EmployerApplicationController : EmployerControllerBase
         return result is null ? null : (result.Application, result.Job);
     }
 }
-

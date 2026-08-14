@@ -10,7 +10,7 @@
 
 **Sprint:** Sprint 01 — Employer Foundation  
 **Goal:** Deliver the employer dashboard and profile foundation, then continue through the tracked employer feature sprints.  
-**Blocking:** Live smoke testing is blocked because the local `MSSQLLocalDB` automatic instance cannot be created or started.
+**Blocking:** None; LocalDB is running and the Employer view-location fix is ready for a fresh live smoke test.
 
 ## Tech Stack
 

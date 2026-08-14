@@ -37,7 +37,7 @@ public class EmployerProfileController : EmployerControllerBase
             .AsNoTracking()
             .FirstOrDefaultAsync(user => user.UserID == employerId.Value);
 
-        return View(profile);
+        return View(EmployerViewRoot + "Profile.cshtml", profile);
     }
 
     [HttpGet]
@@ -62,7 +62,7 @@ public class EmployerProfileController : EmployerControllerBase
                 Website = string.Empty
             };
 
-        return View(profile);
+        return View(EmployerViewRoot + "EditProfile.cshtml", profile);
     }
 
     [HttpPost]
@@ -93,7 +93,7 @@ public class EmployerProfileController : EmployerControllerBase
         if (!ModelState.IsValid)
         {
             input.EmployerID = employerId.Value;
-            return View(input);
+            return View(EmployerViewRoot + "EditProfile.cshtml", input);
         }
 
         var existing = await _context.EmployerProfiles
@@ -128,4 +128,3 @@ public class EmployerProfileController : EmployerControllerBase
         ModelState.Remove(nameof(EmployerProfile.VerificationStatus));
     }
 }
-
