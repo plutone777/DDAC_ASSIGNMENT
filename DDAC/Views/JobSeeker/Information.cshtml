@@ -16,13 +16,10 @@
 
 <div class="jobseeker-page">
 
-    <!-- Sidebar -->
     <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
 
-    <!-- Main Content -->
     <main class="jobseeker-main">
 
-        <!-- Page Header -->
         <div class="page-header">
             <h1>Career Information</h1>
 
@@ -32,8 +29,6 @@
             </p>
         </div>
 
-
-        <!-- Resources -->
         <div class="content-list">
 
             @if (Model != null && Model.Any())
@@ -42,7 +37,6 @@
                 {
                     <div class="list-card">
 
-                        <!-- Resource Header -->
                         <div class="list-card-header">
 
                             <div>
@@ -57,14 +51,10 @@
 
                         </div>
 
-
-                        <!-- Description -->
                         <p class="description-text">
                             @resource.Description
                         </p>
 
-
-                        <!-- Footer -->
                         <div class="job-card-footer">
 
                             <span>
@@ -77,7 +67,7 @@
                                 <a href="@resource.ContentURL"
                                    target="_blank"
                                    rel="noopener noreferrer"
-                                   class="view-job">
+                                   class="detail-item">
                                     View Resource →
                                 </a>
                             }

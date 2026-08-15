@@ -35,69 +35,98 @@
             </div>
         }
 
+
         <a asp-controller="JobSeeker"
            asp-action="BrowseJobs"
            class="back-link">
             ← Back to Jobs
         </a>
 
-
         <div class="content-card card-padding job-details-card">
 
             <div class="job-details-header">
 
                 <div>
-                    <h1>@Model.JobTitle</h1>
+
+                    <h1>
+                        @Model.JobTitle
+                    </h1>
 
                     @if (!string.IsNullOrWhiteSpace(Model.Location))
                     {
                         <p class="job-details-location">
-                            📍 @Model.Location
+                            @Model.Location
                         </p>
                     }
+
                 </div>
 
-                <span class="tag tag-status">
-                    @Model.EmploymentType
-                </span>
+                @if (!string.IsNullOrWhiteSpace(Model.EmploymentType))
+                {
+                    <span class="tag tag-status">
+                        @Model.EmploymentType
+                    </span>
+                }
 
             </div>
 
             <div class="detail-grid">
 
                 <div class="detail-box">
-                    <span class="detail-label">Salary</span>
+
+                    <span class="detail-label">
+                        Salary
+                    </span>
+
                     <span class="detail-value">
                         RM @Model.Salary.ToString("N2")
                     </span>
+
                 </div>
 
                 <div class="detail-box">
-                    <span class="detail-label">Employment</span>
+
+                    <span class="detail-label">
+                        Employment
+                    </span>
+
                     <span class="detail-value">
                         @Model.EmploymentType
                     </span>
+
                 </div>
 
                 <div class="detail-box">
-                    <span class="detail-label">Posted</span>
+
+                    <span class="detail-label">
+                        Posted
+                    </span>
+
                     <span class="detail-value">
                         @Model.PostedDate.ToString("dd MMM yyyy")
                     </span>
+
                 </div>
 
                 <div class="detail-box">
-                    <span class="detail-label">Closing Date</span>
+
+                    <span class="detail-label">
+                        Closing Date
+                    </span>
+
                     <span class="detail-value">
                         @Model.ClosingDate.ToString("dd MMM yyyy")
                     </span>
+
                 </div>
 
             </div>
 
             <div class="content-section">
 
-                <h2>Job Description</h2>
+                <h2>
+                    Job Description
+                </h2>
 
                 <p>
                     @Model.Description
@@ -107,7 +136,9 @@
 
             <div class="content-section">
 
-                <h2>Accessibility Features</h2>
+                <h2>
+                    Accessibility Features
+                </h2>
 
                 @if (!string.IsNullOrWhiteSpace(Model.AccessibilityFeatures))
                 {
@@ -134,7 +165,9 @@
 
             <div class="content-section">
 
-                <h2>Accommodations Available</h2>
+                <h2>
+                    Accommodations Available
+                </h2>
 
                 @if (!string.IsNullOrWhiteSpace(Model.AccommodationsAvailable))
                 {
@@ -161,15 +194,13 @@
 
             <div class="content-section">
 
-                <h2>Employer</h2>
+                <h2>
+                    Employer
+                </h2>
 
                 @if (employer != null)
                 {
                     <div class="employer-card">
-
-                        <div class="employer-icon">
-                            🏢
-                        </div>
 
                         <div class="employer-info">
 
@@ -199,21 +230,30 @@
                                     @if (!string.IsNullOrWhiteSpace(employer.Address))
                                     {
                                         <div class="detail-item">
-                                            <strong>Address:</strong>
+
+                                            <strong>
+                                                Address:
+                                            </strong>
+
                                             @employer.Address
+
                                         </div>
                                     }
 
                                     @if (!string.IsNullOrWhiteSpace(employer.Website))
                                     {
                                         <div class="detail-item">
-                                            <strong>Website:</strong>
+
+                                            <strong>
+                                                Website:
+                                            </strong>
 
                                             <a href="@employer.Website"
                                                target="_blank"
                                                rel="noopener noreferrer">
                                                 @employer.Website
                                             </a>
+
                                         </div>
                                     }
 

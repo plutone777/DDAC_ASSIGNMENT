@@ -74,7 +74,6 @@ namespace DDAC.Controllers
                 return View();
             }
 
-            // Store logged-in user's information
             HttpContext.Session.SetInt32("UserID", user.UserID);
             HttpContext.Session.SetString("FullName", user.FullName);
             HttpContext.Session.SetString("Email", user.Email);
@@ -82,7 +81,7 @@ namespace DDAC.Controllers
 
             if (user.Role == "JobSeeker")
             {
-                return RedirectToAction("Index", "JobSeeker");
+                return RedirectToAction("Announcements", "JobSeeker");
             }
             else if (user.Role == "Employer")
             {
@@ -98,6 +97,15 @@ namespace DDAC.Controllers
             }
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Login", "User");
         }
 
     }

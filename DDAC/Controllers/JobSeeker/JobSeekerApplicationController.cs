@@ -14,11 +14,6 @@ namespace DDAC.Controllers
             _context = context;
         }
 
-
-        // =========================
-        // APPLY - GET
-        // =========================
-
         [HttpGet]
         public async Task<IActionResult> Apply(int jobId)
         {
@@ -43,8 +38,6 @@ namespace DDAC.Controllers
                 .FirstOrDefaultAsync(p =>
                     p.JobSeekerID == jobSeekerId.Value);
 
-
-            // No profile
             if (profile == null)
             {
                 TempData["ApplicationError"] =
@@ -55,8 +48,6 @@ namespace DDAC.Controllers
                     "JobSeekerProfile");
             }
 
-
-            // No resume
             if (string.IsNullOrWhiteSpace(profile.ResumeURL))
             {
                 TempData["ApplicationError"] =
@@ -67,8 +58,6 @@ namespace DDAC.Controllers
                     "JobSeekerProfile");
             }
 
-
-            // Already applied
             var alreadyApplied = await _context.JobApplications
                 .AnyAsync(a =>
                     a.JobID == jobId &&
@@ -99,11 +88,6 @@ namespace DDAC.Controllers
                 });
         }
 
-
-        // =========================
-        // APPLY - POST
-        // =========================
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Apply(
@@ -131,8 +115,6 @@ namespace DDAC.Controllers
                 .FirstOrDefaultAsync(p =>
                     p.JobSeekerID == jobSeekerId.Value);
 
-
-            // No profile
             if (profile == null)
             {
                 TempData["ApplicationError"] =
@@ -143,8 +125,6 @@ namespace DDAC.Controllers
                     "JobSeekerProfile");
             }
 
-
-            // No resume
             if (string.IsNullOrWhiteSpace(profile.ResumeURL))
             {
                 TempData["ApplicationError"] =
@@ -155,8 +135,6 @@ namespace DDAC.Controllers
                     "JobSeekerProfile");
             }
 
-
-            // Cover letter validation
             if (string.IsNullOrWhiteSpace(coverLetter))
             {
                 ModelState.AddModelError(
@@ -178,8 +156,6 @@ namespace DDAC.Controllers
                     });
             }
 
-
-            // Check duplicate application
             var alreadyApplied = await _context.JobApplications
                 .AnyAsync(a =>
                     a.JobID == jobId &&
@@ -196,8 +172,6 @@ namespace DDAC.Controllers
                     new { id = jobId });
             }
 
-
-            // Create application
             var application = new JobApplication
             {
                 JobID = jobId,
@@ -223,11 +197,6 @@ namespace DDAC.Controllers
                 "JobSeeker",
                 new { id = jobId });
         }
-
-
-        // =========================
-        // GET CURRENT JOB SEEKER
-        // =========================
 
         private int? GetCurrentJobSeekerId()
         {

@@ -29,7 +29,9 @@
 
         <div class="page-header">
             <h1>Edit Profile</h1>
-            <p>Keep your profile up to date so employers can learn more about you.</p>
+            <p>
+                Keep your profile up to date so employers can learn more about you.
+            </p>
         </div>
 
         <div class="profile-form-container">
@@ -202,12 +204,111 @@
                                            value="@skill.SkillID" />
 
                                     <input type="hidden"
+                                           name="skillNames"
+                                           value="@skill.SkillName" />
+
+                                    <input type="hidden"
                                            name="skillLevels"
                                            value="@skill.SkillLevel" />
 
                                 </div>
                             }
                         }
+
+                    </div>
+
+                </div>
+
+                <div class="form-section">
+
+                    <div class="section-heading">
+
+                        <h2>Qualifications</h2>
+
+                        <p>
+                            Add your educational qualifications and certifications.
+                        </p>
+
+                    </div>
+
+                    <div id="qualifications">
+
+                        @if (ViewBag.Qualifications != null)
+                        {
+                            foreach (var qualification in ViewBag.Qualifications)
+                            {
+                                <div class="qualification-item">
+
+                                    <div class="qualification-fields">
+
+                                        <div class="form-group">
+
+                                            <label>
+                                                Qualification
+                                            </label>
+
+                                            <input type="text"
+                                                   name="qualificationNames"
+                                                   value="@qualification.QualificationName"
+                                                   class="form-input"
+                                                   placeholder="e.g. BSc (Hons) Software Engineering" />
+
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <label>
+                                                Institution
+                                            </label>
+
+                                            <input type="text"
+                                                   name="institutions"
+                                                   value="@qualification.Institution"
+                                                   class="form-input"
+                                                   placeholder="e.g. Asia Pacific University" />
+
+                                        </div>
+
+                                        <div class="form-group qualification-year">
+
+                                            <label>
+                                                Completion Year
+                                            </label>
+
+                                            <input type="number"
+                                                   name="completionYears"
+                                                   value="@qualification.CompletionYear"
+                                                   class="form-input"
+                                                   min="1950"
+                                                   max="2100"
+                                                   placeholder="e.g. 2026" />
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="qualification-actions">
+
+                                        <button type="button"
+                                                class="secondary-button remove-qualification">
+                                            Remove
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+                    <div class="qualification-add-container">
+
+                        <button type="button"
+                                id="addQualificationButton"
+                                class="secondary-button">
+                            + Add Qualification
+                        </button>
 
                     </div>
 
@@ -260,7 +361,9 @@
                                     🗎
                                 </span>
 
-                                <strong>Your Resume</strong>
+                                <strong>
+                                    Your Resume
+                                </strong>
 
                             </div>
 
@@ -275,6 +378,7 @@
                     }
 
                 </div>
+
 
                 <div class="form-buttons">
 
@@ -298,6 +402,7 @@
     </main>
 
 </div>
+
 
 @section Scripts {
 
@@ -324,135 +429,370 @@
 
         let selectedSkillId = null;
 
-        skillSearch.addEventListener("input", async function () {
 
-            const term = this.value.trim();
+        skillSearch.addEventListener(
+            "input",
+            async function () {
 
-            selectedSkillId = null;
-            skillSuggestions.innerHTML = "";
+                const term =
+                    this.value.trim();
 
-            if (term.length < 2) {
-                return;
+                selectedSkillId = null;
+
+                skillSuggestions.innerHTML = "";
+
+                if (term.length < 2) {
+                    return;
+                }
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/JobSeekerProfile/SearchSkills?term=${encodeURIComponent(term)}`
+                        );
+
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const skills =
+                        await response.json();
+
+                    skills.forEach(skill => {
+
+                        const item =
+                            document.createElement("div");
+
+                        item.className =
+                            "skill-suggestion";
+
+                        item.textContent =
+                            skill.name;
+
+                        item.addEventListener(
+                            "click",
+                            function () {
+
+                                skillSearch.value =
+                                    skill.name;
+
+                                selectedSkillId =
+                                    skill.id;
+
+                                skillSuggestions.innerHTML =
+                                    "";
+
+                            }
+                        );
+
+                        skillSuggestions.appendChild(
+                            item
+                        );
+
+                    });
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Error searching skills:",
+                        error
+                    );
+
+                }
+
             }
+        );
 
-            const response = await fetch(
-                `/JobSeekerProfile/SearchSkills?term=${encodeURIComponent(term)}`
-            );
 
-            const skills = await response.json();
+        addSkillButton.addEventListener(
+            "click",
+            function () {
 
-            skills.forEach(skill => {
+                const skillName =
+                    skillSearch.value.trim();
 
-                const item = document.createElement("div");
+                const level =
+                    skillLevel.value;
 
-                item.className = "skill-suggestion";
-                item.textContent = skill.name;
+                if (!skillName) {
+                    alert("Please enter a skill.");
+                    return;
+                }
 
-                item.addEventListener("click", function () {
+                if (!level) {
+                    alert(
+                        "Please select a proficiency level."
+                    );
+                    return;
+                }
 
-                    skillSearch.value = skill.name;
-                    selectedSkillId = skill.id;
-                    skillSuggestions.innerHTML = "";
+                const existing =
+                    Array.from(
+                        selectedSkills.querySelectorAll(
+                            ".selected-skill"
+                        )
+                    ).some(item => {
 
-                });
+                        const name =
+                            item.querySelector(
+                                ".selected-skill-name"
+                            );
 
-                skillSuggestions.appendChild(item);
+                        return name &&
+                            name.textContent
+                                .trim()
+                                .toLowerCase() ===
+                            skillName.toLowerCase();
 
-            });
+                    });
 
-        });
+                if (existing) {
 
-        addSkillButton.addEventListener("click", function () {
+                    alert(
+                        "This skill has already been added."
+                    );
 
-            const skillName = skillSearch.value.trim();
-            const level = skillLevel.value;
+                    return;
+                }
 
-            if (!skillName) {
-                alert("Please enter a skill.");
-                return;
-            }
 
-            if (!level) {
-                alert("Please select a proficiency level.");
-                return;
-            }
+                const container =
+                    document.createElement("div");
 
-            const existing =
-                Array.from(
-                    selectedSkills.querySelectorAll(".selected-skill")
-                ).some(item =>
-                    item.querySelector(".selected-skill-name")
-                        .textContent
-                        .trim()
-                        .toLowerCase() === skillName.toLowerCase()
+                container.className =
+                    "selected-skill";
+
+                if (selectedSkillId) {
+
+                    container.dataset.skillId =
+                        selectedSkillId;
+
+                }
+
+
+                container.innerHTML = `
+
+                    <span class="selected-skill-name">
+                        ${escapeHtml(skillName)}
+                    </span>
+
+                    <span class="selected-skill-level">
+                        ${escapeHtml(level)}
+                    </span>
+
+                    <button type="button"
+                            class="remove-skill">
+                        ×
+                    </button>
+
+                    <input type="hidden"
+                           name="skillIDs"
+                           value="${selectedSkillId || 0}" />
+
+                    <input type="hidden"
+                           name="skillNames"
+                           value="${escapeHtml(skillName)}" />
+
+                    <input type="hidden"
+                           name="skillLevels"
+                           value="${escapeHtml(level)}" />
+
+                `;
+
+
+                container
+                    .querySelector(
+                        ".remove-skill"
+                    )
+                    .addEventListener(
+                        "click",
+                        function () {
+
+                            container.remove();
+
+                        }
+                    );
+
+
+                selectedSkills.appendChild(
+                    container
                 );
 
-            if (existing) {
-                alert("This skill has already been added.");
-                return;
+
+                skillSearch.value = "";
+
+                skillLevel.value = "";
+
+                selectedSkillId = null;
+
+                skillSuggestions.innerHTML = "";
+
             }
+        );
 
-            const container =
-                document.createElement("div");
 
-            container.className = "selected-skill";
-
-            if (selectedSkillId) {
-                container.dataset.skillId = selectedSkillId;
-            }
-
-            container.innerHTML = `
-
-                <span class="selected-skill-name">
-                    ${skillName}
-                </span>
-
-                <span class="selected-skill-level">
-                    ${level}
-                </span>
-
-                <button type="button"
-                        class="remove-skill">
-                    ×
-                </button>
-
-                <input type="hidden"
-                       name="skillIDs"
-                       value="${selectedSkillId || 0}" />
-
-                <input type="hidden"
-                       name="skillNames"
-                       value="${skillName}" />
-
-                <input type="hidden"
-                       name="skillLevels"
-                       value="${level}" />
-
-            `;
-
-            container
-                .querySelector(".remove-skill")
-                .addEventListener("click", function () {
-                    container.remove();
-                });
-
-            selectedSkills.appendChild(container);
-
-            skillSearch.value = "";
-            skillLevel.value = "";
-            selectedSkillId = null;
-            skillSuggestions.innerHTML = "";
-
-        });
-
-        document.querySelectorAll(".remove-skill")
+        document
+            .querySelectorAll(".remove-skill")
             .forEach(button => {
 
-                button.addEventListener("click", function () {
-                    this.closest(".selected-skill").remove();
-                });
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const skill =
+                            this.closest(
+                                ".selected-skill"
+                            );
+
+                        if (skill) {
+                            skill.remove();
+                        }
+
+                    }
+                );
 
             });
+
+        const qualifications =
+            document.getElementById(
+                "qualifications"
+            );
+
+        const addQualificationButton =
+            document.getElementById(
+                "addQualificationButton"
+            );
+
+
+        addQualificationButton.addEventListener(
+            "click",
+            function () {
+
+                const container =
+                    document.createElement("div");
+
+                container.className =
+                    "qualification-item";
+
+                container.innerHTML = `
+
+                    <div class="qualification-fields">
+
+                        <div class="form-group">
+
+                            <label>
+                                Qualification
+                            </label>
+
+                            <input type="text"
+                                   name="qualificationNames"
+                                   class="form-input"
+                                   placeholder="e.g. BSc (Hons) Software Engineering" />
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Institution
+                            </label>
+
+                            <input type="text"
+                                   name="institutions"
+                                   class="form-input"
+                                   placeholder="e.g. Asia Pacific University" />
+
+                        </div>
+
+                        <div class="form-group qualification-year">
+
+                            <label>
+                                Completion Year
+                            </label>
+
+                            <input type="number"
+                                   name="completionYears"
+                                   class="form-input"
+                                   min="1950"
+                                   max="2100"
+                                   placeholder="e.g. 2026" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="qualification-actions">
+
+                        <button type="button"
+                                class="secondary-button remove-qualification">
+                            Remove
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                qualifications.appendChild(
+                    container
+                );
+
+
+                container
+                    .querySelector(
+                        ".remove-qualification"
+                    )
+                    .addEventListener(
+                        "click",
+                        function () {
+
+                            container.remove();
+
+                        }
+                    );
+
+            }
+        );
+
+
+        document
+            .querySelectorAll(
+                ".remove-qualification"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const qualification =
+                            this.closest(
+                                ".qualification-item"
+                            );
+
+                        if (qualification) {
+                            qualification.remove();
+                        }
+
+                    }
+                );
+
+            });
+
+
+        function escapeHtml(value) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                value;
+
+            return div.innerHTML;
+
+        }
 
     </script>
 }

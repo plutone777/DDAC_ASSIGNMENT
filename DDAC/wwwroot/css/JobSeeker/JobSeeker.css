@@ -1,4 +1,72 @@
-﻿.jobseeker-page {
+﻿.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    padding: 12px;
+    background-color: #3a4350;
+    border-radius: 8px;
+}
+
+.sidebar-user-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background-color: #eef1f4;
+    color: #3a4350;
+    border-radius: 50%;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.sidebar-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.sidebar-user-name {
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sidebar-user-role {
+    margin-top: 2px;
+    color: #aeb6c1;
+    font-size: 12px;
+}
+
+.sidebar-logout {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.logout-button {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: transparent;
+    color: #dce1e6;
+    border: 1px solid #596473;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .logout-button:hover {
+        background-color: #4a5563;
+        color: #ffffff;
+    }
+
+.jobseeker-page {
     display: flex;
     min-height: 100vh;
     background-color: #e9edf2;
@@ -97,6 +165,75 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
     }
 
+.content-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.list-card {
+    display: block;
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #d7dce1;
+    border-radius: 10px;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.list-card-hover {
+    transition: 0.2s;
+}
+
+    .list-card-hover:hover {
+        background-color: #f8f9fa;
+        border-color: #b8c0c9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+.list-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.list-card-title {
+    margin: 0;
+    color: #303740;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.list-card-subtitle {
+    margin: 7px 0 0;
+    color: #6b737c;
+    font-size: 14px;
+}
+
+
+.search-bar {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.search-input {
+    flex: 1 1 auto;
+    min-width: 250px;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border: 1px solid #cbd1d8;
+    border-radius: 6px;
+    color: #444;
+    font-size: 14px;
+}
+
+
 .primary-button,
 .secondary-button {
     display: inline-block;
@@ -154,7 +291,9 @@
 .tag-status {
     border-radius: 20px;
     font-weight: 600;
+    white-space: nowrap;
 }
+
 
 .content-section {
     padding: 25px 0;
@@ -196,6 +335,13 @@
         font-size: 14px;
     }
 
+.description-text {
+    color: #555e67;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
 .form-section {
     padding: 25px 0;
     border-bottom: 1px solid #e2e6ea;
@@ -222,8 +368,8 @@
     }
 
 .form-input,
-.form-select,
-.search-input {
+.form-select {
+    width: 100%;
     padding: 12px 14px;
     box-sizing: border-box;
     background-color: #ffffff;
@@ -231,11 +377,6 @@
     border-radius: 6px;
     color: #444;
     font-size: 14px;
-}
-
-.form-input,
-.form-select {
-    width: 100%;
 }
 
     .form-input:focus,
@@ -255,6 +396,7 @@ textarea.form-input {
     color: #d9534f;
     font-size: 13px;
 }
+
 
 .detail-list {
     display: flex;
@@ -312,75 +454,6 @@ textarea.form-input {
     font-weight: 600;
 }
 
-.search-bar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-    align-items: stretch;
-}
-
-.search-input {
-    flex: 1 1 auto;
-    min-width: 250px;
-}
-
-.content-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.list-card {
-    display: block;
-    padding: 25px;
-    background-color: #ffffff;
-    border: 1px solid #d7dce1;
-    border-radius: 10px;
-    color: inherit;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.list-card-hover {
-    transition: 0.2s;
-}
-
-    .list-card-hover:hover {
-        background-color: #f8f9fa;
-        border-color: #b8c0c9;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    }
-
-.list-card-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.list-card-title {
-    margin: 0;
-    color: #303740;
-    font-size: 21px;
-    font-weight: 600;
-}
-
-.list-card-subtitle {
-    margin: 7px 0 0;
-    color: #6b737c;
-    font-size: 14px;
-}
-
-.muted-text {
-    color: #6b737c;
-}
-
-.description-text {
-    color: #555e67;
-    font-size: 14px;
-    line-height: 1.6;
-}
 
 .empty-state {
     padding: 50px;
@@ -402,18 +475,6 @@ textarea.form-input {
         font-size: 14px;
     }
 
-.back-link {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: #4d5b6a;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-}
-
-    .back-link:hover {
-        color: #2f3742;
-    }
 
 .action-area {
     display: flex;
@@ -423,38 +484,6 @@ textarea.form-input {
     border-top: 1px solid #e2e6ea;
 }
 
-.no-information {
-    color: #89929c !important;
-    font-size: 14px !important;
-    font-style: italic;
-}
-
-@media (max-width: 900px) {
-    .jobseeker-main {
-        padding: 30px;
-    }
-
-    .detail-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-
-    .detail-box {
-        padding: 0;
-        border-right: none;
-    }
-}
-
-@media (max-width: 768px) {
-    .search-bar {
-        flex-direction: column;
-    }
-
-    .list-card-header {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
 
 .alert-message {
     padding: 14px 18px;
@@ -474,9 +503,190 @@ textarea.form-input {
     background-color: #f0f8f1;
     border: 1px solid #b9d8bd;
     color: #3d7042;
-} 
+}
+
+
+.muted-text {
+    color: #6b737c;
+}
+
+.no-information {
+    color: #89929c !important;
+    font-size: 14px !important;
+    font-style: italic;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #4d5b6a;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+    .back-link:hover {
+        color: #2f3742;
+    }
+
+
+.support-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.support-tab {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+    .support-tab:hover {
+        background: #f5f5f5;
+    }
+
+    .support-tab.active {
+        font-weight: 600;
+    }
+
+.support-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.support-card {
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #d7dce1;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.support-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.card-title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.support-card-title {
+    margin: 0;
+    color: #303740;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.card-date {
+    color: #7a838d;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.support-advisor {
+    margin-bottom: 20px;
+}
+
+.support-advisor-name {
+    display: block;
+    color: #3f4852;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.support-advisor-specialisation {
+    display: block;
+    margin-top: 3px;
+    color: #7a838d;
+    font-size: 13px;
+}
+
+.support-card-content {
+    padding-top: 18px;
+    border-top: 1px solid #e2e6ea;
+}
+
+    .support-card-content + .support-card-content {
+        margin-top: 18px;
+    }
+
+    .support-card-content h3 {
+        margin: 0 0 8px;
+        color: #4d5965;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .support-card-content p {
+        margin: 0;
+        color: #5f6974;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+.support-response {
+    padding: 15px;
+    background-color: #f5f7f9;
+    border-radius: 6px;
+}
+
+    .support-response p {
+        color: #4d5965;
+    }
+
+.support-response-date {
+    margin-top: 8px !important;
+    color: #89929c !important;
+    font-size: 12px !important;
+}
+
+
+@media (max-width: 900px) {
+
+    .jobseeker-main {
+        padding: 30px;
+    }
+
+    .detail-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .detail-box {
+        padding: 0;
+        border-right: none;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .search-bar {
+        flex-direction: column;
+    }
+
+    .list-card-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
 
 @media (max-width: 600px) {
+
     .jobseeker-page {
         flex-direction: column;
     }

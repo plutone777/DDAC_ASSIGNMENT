@@ -18,7 +18,6 @@ namespace DDAC.Services
             IFormFile resume,
             int userId)
         {
-            // Get AWS settings
             var accessKey =
                 _configuration["AWS:aws_access_key_id"];
 
@@ -34,23 +33,17 @@ namespace DDAC.Services
             var bucketName =
                 _configuration["AWS:bucket_name"];
 
-
-            // Create temporary AWS credentials
             var credentials = new SessionAWSCredentials(
                 accessKey,
                 secretKey,
                 sessionToken
             );
 
-
-            // Create S3 client
             var s3Client = new AmazonS3Client(
                 credentials,
                 RegionEndpoint.GetBySystemName(region)
             );
 
-
-            // Create unique filename
             var extension =
                 Path.GetExtension(resume.FileName)
                     .ToLowerInvariant();
@@ -58,8 +51,6 @@ namespace DDAC.Services
             var fileName =
                 $"resumes/{userId}/{Guid.NewGuid()}{extension}";
 
-
-            // Create upload request
             var uploadRequest = new PutObjectRequest
             {
                 BucketName = bucketName,
@@ -68,12 +59,8 @@ namespace DDAC.Services
                 ContentType = resume.ContentType
             };
 
-
-            // Upload to S3
             await s3Client.PutObjectAsync(uploadRequest);
 
-
-            // Return the S3 object key
             return fileName;
         }
 

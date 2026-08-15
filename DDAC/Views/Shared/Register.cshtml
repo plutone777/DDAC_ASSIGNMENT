@@ -1,47 +1,145 @@
 ﻿@model DDAC.Models.User
 
-<h2>Register</h2>
+@{
+    ViewData["Title"] = "Register";
+}
 
-<form asp-action="Register" method="post">
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/Authentication.css"
+          asp-append-version="true" />
+}
 
-    <div>
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+<div class="auth-page">
+
+    <div class="auth-card register-card">
+
+        <div class="auth-header">
+            <h1>Create an Account</h1>
+        </div>
+
+        <form asp-action="Register"
+              method="post"
+              class="auth-form">
+
+            <div asp-validation-summary="All"
+                 class="validation-summary">
+            </div>
+
+            <div class="form-row">
+
+                <div class="form-group">
+                    <label asp-for="FullName">
+                        Full Name
+                    </label>
+
+                    <input asp-for="FullName"
+                           class="form-input"
+                           placeholder="Enter your full name" />
+
+                    <span asp-validation-for="FullName"
+                          class="validation-message">
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">
+                        Phone Number
+                    </label>
+
+                    <input asp-for="PhoneNumber"
+                           class="form-input"
+                           placeholder="Enter your phone number" />
+
+                    <span asp-validation-for="PhoneNumber"
+                          class="validation-message">
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">
+                    Email Address
+                </label>
+
+                <input asp-for="Email"
+                       type="email"
+                       class="form-input"
+                       placeholder="Enter your email" />
+
+                <span asp-validation-for="Email"
+                      class="validation-message">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Role">
+                    Account Type
+                </label>
+
+                <select asp-for="Role"
+                        class="form-select">
+
+                    <option value="">
+                        Select your role
+                    </option>
+
+                    <option value="JobSeeker">
+                        Job Seeker
+                    </option>
+
+                    <option value="Employer">
+                        Employer
+                    </option>
+
+                    <option value="CareerAdvisor">
+                        Career Advisor
+                    </option>
+
+                    <option value="Admin">
+                        Admin
+                    </option>
+
+                </select>
+
+                <span asp-validation-for="Role"
+                      class="validation-message">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    Password
+                </label>
+
+                <input id="password"
+                       name="password"
+                       type="password"
+                       class="form-input"
+                       placeholder="Create a password"
+                       required />
+            </div>
+
+            <button type="submit"
+                    class="auth-button">
+                Create Account
+            </button>
+
+        </form>
+
+        <div class="auth-footer">
+            <p>
+                Already have an account?
+                <a asp-action="Login">
+                    Login
+                </a>
+            </p>
+        </div>
+
     </div>
 
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" type="email" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="PhoneNumber"></label>
-        <input asp-for="PhoneNumber" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Role"></label>
-        <select asp-for="Role">
-            <option value="">-- Select Role --</option>
-            <option value="JobSeeker">Job Seeker</option>
-            <option value="Employer">Employer</option>
-            <option value="CareerAdvisor">Career Advisor</option>
-            <option value="Admin">Admin</option>
-        </select>
-        <span asp-validation-for="Role" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label>Password</label>
-        <input name="password" type="password" />
-    </div>
-
-    <button type="submit">Register</button>
-
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

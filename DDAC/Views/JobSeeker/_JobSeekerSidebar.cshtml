@@ -1,17 +1,22 @@
 ﻿<aside class="jobseeker-sidebar">
 
-    <div class="sidebar-logo">
-        <h2>Job Portal</h2>
-        <p>Job Seeker</p>
+    <div class="sidebar-user">
+        <div class="sidebar-user-icon">
+            @Context.Session.GetString("FullName")?.Substring(0, 1).ToUpper()
+        </div>
+
+        <div class="sidebar-user-info">
+            <span class="sidebar-user-name">
+                @Context.Session.GetString("FullName")
+            </span>
+
+            <span class="sidebar-user-role">
+                Job Seeker
+            </span>
+        </div>
     </div>
 
     <nav class="sidebar-nav">
-
-        <a asp-controller="JobSeeker"
-           asp-action="Index"
-           class="nav-button">
-            Home
-        </a>
 
         <a asp-controller="JobSeekerProfile"
            asp-action="EditProfile"
@@ -37,12 +42,35 @@
             Get More Information
         </a>
 
-        <a asp-controller="JobSeeker"
-           asp-action="Inquiry"
+        <a asp-controller="Inquiry"
+           asp-action="CareerSupport"
            class="nav-button">
-            Submit Inquiry
+            Career Support
+        </a>
+
+        <a asp-controller="JobSeeker"
+           asp-action="Announcements"
+           class="nav-button">
+            Announcements
         </a>
 
     </nav>
+
+    <div class="sidebar-logout">
+
+        <form asp-controller="User"
+              asp-action="Logout"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <button type="submit"
+                    class="logout-button">
+                Logout
+            </button>
+
+        </form>
+
+    </div>
 
 </aside>

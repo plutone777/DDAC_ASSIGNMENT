@@ -1,0 +1,366 @@
+﻿@{
+    ViewData["Title"] = "Career Support";
+
+    var recommendations = ViewBag.Recommendations
+        as IEnumerable<DDAC.Models.CareerRecommendation>;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        <div class="page-header">
+
+            <h1>Career Support</h1>
+
+            <p>
+                Get help from career advisors through inquiries
+                or personalised career guidance.
+            </p>
+
+        </div>
+
+        @if (TempData["InquirySuccess"] != null)
+        {
+            <div class="success-message">
+                @TempData["InquirySuccess"]
+            </div>
+        }
+
+        @if (TempData["GuidanceSuccess"] != null)
+        {
+            <div class="success-message">
+                @TempData["GuidanceSuccess"]
+            </div>
+        }
+
+        <div class="content-card card-padding"
+             style="margin-bottom: 25px;">
+
+            <div class="section-heading">
+
+                <h2>My Career Support</h2>
+
+                <p>
+                    View your previous inquiries, guidance requests,
+                    and career recommendations.
+                </p>
+
+            </div>
+
+            <div class="action-area"
+                 style="padding-top: 0; border-top: none;">
+
+                <a asp-controller="Inquiry"
+                   asp-action="MyInquiries"
+                   class="secondary-button">
+                    My Inquiries
+                </a>
+
+                <a asp-controller="Inquiry"
+                   asp-action="MyRequests"
+                   class="secondary-button">
+                    My Guidance Requests
+                </a>
+
+                <a asp-controller="Inquiry"
+                   asp-action="MyRecommendations"
+                   class="secondary-button">
+                    Get Recommendations
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="content-card card-padding">
+
+            <div class="section-heading">
+
+                <h2>Get Career Support</h2>
+
+                <p>
+                    Choose whether you would like to send an inquiry
+                    or request career guidance.
+                </p>
+
+            </div>
+
+            <div class="support-toggle">
+
+                <button type="button"
+                        id="inquiryTab"
+                        class="support-tab active"
+                        onclick="showInquiry()">
+                    Submit Inquiry
+                </button>
+
+                <button type="button"
+                        id="guidanceTab"
+                        class="support-tab"
+                        onclick="showGuidance()">
+                    Request Career Guidance
+                </button>
+
+            </div>
+
+            <form id="inquiryForm"
+                  asp-controller="Inquiry"
+                  asp-action="Submit"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="content-section">
+
+                    <h2>Career Advisor</h2>
+
+                    <div class="form-group">
+
+                        <label for="InquiryAdvisorID">
+                            Select Career Advisor
+                        </label>
+
+                        <select id="InquiryAdvisorID"
+                                name="AdvisorID"
+                                class="form-input">
+
+                            <option value="">
+                                Select an advisor
+                            </option>
+
+                            @foreach (var advisor in ViewBag.Advisors)
+                            {
+                                <option value="@advisor.Value">
+                                    @advisor.Text
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="content-section">
+
+                    <h2>Inquiry Details</h2>
+
+                    <div class="form-group">
+
+                        <label for="InquirySubject">
+                            Subject
+                        </label>
+
+                        <input id="InquirySubject"
+                               name="Subject"
+                               class="form-input"
+                               placeholder="e.g. Career advice for software development" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="InquiryMessage">
+                            Message
+                        </label>
+
+                        <textarea id="InquiryMessage"
+                                  name="Message"
+                                  class="form-input"
+                                  rows="8"
+                                  placeholder="Describe your question or what you would like advice about..."></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div class="action-area">
+
+                    <button type="submit"
+                            class="primary-button">
+                        Submit Inquiry
+                    </button>
+
+                </div>
+
+            </form>
+
+            <form id="guidanceForm"
+                  asp-controller="Inquiry"
+                  asp-action="RequestGuidance"
+                  method="post"
+                  style="display: none;">
+
+                @Html.AntiForgeryToken()
+
+                <div class="content-section">
+
+                    <h2>Career Advisor</h2>
+
+                    <div class="form-group">
+
+                        <label for="GuidanceAdvisorID">
+                            Select Career Advisor
+                        </label>
+
+                        <select id="GuidanceAdvisorID"
+                                name="AdvisorID"
+                                class="form-input">
+
+                            <option value="">
+                                Select an advisor
+                            </option>
+
+                            @foreach (var advisor in ViewBag.Advisors)
+                            {
+                                <option value="@advisor.Value">
+                                    @advisor.Text
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="content-section">
+
+                    <h2>Guidance Details</h2>
+
+                    <div class="form-group">
+
+                        <label for="GuidanceType">
+                            Type of Guidance
+                        </label>
+
+                        <select id="GuidanceType"
+                                name="GuidanceType"
+                                class="form-input">
+
+                            <option value="">
+                                Select guidance type
+                            </option>
+
+                            <option value="Career Planning">
+                                Career Planning
+                            </option>
+
+                            <option value="Career Change">
+                                Career Change
+                            </option>
+
+                            <option value="Skill Development">
+                                Skill Development
+                            </option>
+
+                            <option value="Job Search">
+                                Job Search
+                            </option>
+
+                            <option value="Education">
+                                Education &amp; Further Studies
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="GuidanceSubject">
+                            Subject
+                        </label>
+
+                        <input id="GuidanceSubject"
+                               name="Subject"
+                               class="form-input"
+                               placeholder="e.g. Starting a career in software development" />
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="GuidanceNotes">
+                            Career Goals and Concerns
+                        </label>
+
+                        <textarea id="GuidanceNotes"
+                                  name="GuidanceNotes"
+                                  class="form-input"
+                                  rows="8"
+                                  placeholder="Describe your interests, skills, experience, career goals, or the type of guidance you are looking for..."></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div class="action-area">
+
+                    <button type="submit"
+                            class="primary-button">
+                        Request Career Guidance
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function showInquiry() {
+
+            document.getElementById("inquiryForm").style.display = "block";
+            document.getElementById("guidanceForm").style.display = "none";
+
+            document.getElementById("inquiryTab").classList.add("active");
+            document.getElementById("guidanceTab").classList.remove("active");
+        }
+
+
+        function showGuidance() {
+
+            document.getElementById("inquiryForm").style.display = "none";
+            document.getElementById("guidanceForm").style.display = "block";
+
+            document.getElementById("inquiryTab").classList.remove("active");
+            document.getElementById("guidanceTab").classList.add("active");
+        }
+
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

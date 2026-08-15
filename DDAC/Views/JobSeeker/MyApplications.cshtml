@@ -17,13 +17,10 @@
 
 <div class="jobseeker-page">
 
-    <!-- Sidebar -->
     <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
 
-    <!-- Main Content -->
     <main class="jobseeker-main">
 
-        <!-- Page Header -->
         <div class="page-header">
             <h1>My Applications</h1>
 
@@ -33,8 +30,6 @@
             </p>
         </div>
 
-
-        <!-- Application List -->
         <div class="content-list">
 
             @if (Model != null && Model.Any())
@@ -51,7 +46,6 @@
 
                     <div class="list-card list-card-hover">
 
-                        <!-- Application Header -->
                         <div class="list-card-header">
 
                             <div>
@@ -63,13 +57,12 @@
                                 @if (!string.IsNullOrWhiteSpace(job.Location))
                                 {
                                     <p class="list-card-subtitle">
-                                        📍 @job.Location
+                                        @job.Location
                                     </p>
                                 }
 
                             </div>
 
-                            <!-- Application Status -->
                             @if (!string.IsNullOrWhiteSpace(application.Status))
                             {
                                 <span class="tag tag-status">
@@ -79,14 +72,10 @@
 
                         </div>
 
-
-                        <!-- Job Description -->
                         <p class="description-text job-description">
                             @job.Description
                         </p>
 
-
-                        <!-- Accessibility Features -->
                         @if (!string.IsNullOrWhiteSpace(job.AccessibilityFeatures))
                         {
                             <div class="job-accessibility-section">
@@ -110,8 +99,6 @@
                             </div>
                         }
 
-
-                        <!-- Accommodations -->
                         @if (!string.IsNullOrWhiteSpace(job.AccommodationsAvailable))
                         {
                             <div class="job-accessibility-section">
@@ -135,8 +122,6 @@
                             </div>
                         }
 
-
-                        <!-- Job Information -->
                         <div class="job-card-details">
 
                             <span class="detail-item">
@@ -151,8 +136,6 @@
 
                         </div>
 
-
-                        <!-- Footer -->
                         <div class="job-card-footer">
 
                             <span>
@@ -163,7 +146,7 @@
                             <a asp-controller="JobSeeker"
                                asp-action="JobDetails"
                                asp-route-id="@job.JobID"
-                               class="view-job">
+                               class="detail-item">
                                 View Job →
                             </a>
 

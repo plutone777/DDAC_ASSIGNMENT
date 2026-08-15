@@ -31,7 +31,8 @@ namespace DDAC.Controllers.JobSeeker
             }
 
             var profile = _context.JobSeekerProfiles
-                .FirstOrDefault(p => p.JobSeekerID == userId.Value);
+                .FirstOrDefault(p =>
+                    p.JobSeekerID == userId.Value);
 
             if (profile == null)
             {
@@ -42,7 +43,8 @@ namespace DDAC.Controllers.JobSeeker
             }
 
             var userSkills = _context.JobSeekerSkills
-                .Where(js => js.JobSeekerID == userId.Value)
+                .Where(js =>
+                    js.JobSeekerID == userId.Value)
                 .Join(
                     _context.Skills,
                     js => js.SkillID,
@@ -56,6 +58,15 @@ namespace DDAC.Controllers.JobSeeker
                 .ToList();
 
             ViewBag.UserSkills = userSkills;
+
+            var qualifications = _context.Qualifications
+                .Where(q =>
+                    q.JobSeekerID == userId.Value)
+                .OrderByDescending(q =>
+                    q.CompletionYear)
+                .ToList();
+
+            ViewBag.Qualifications = qualifications;
 
             return View(
                 "~/Views/JobSeeker/EditProfile.cshtml",
@@ -72,8 +83,10 @@ namespace DDAC.Controllers.JobSeeker
             }
 
             var skills = _context.Skills
-                .Where(s => s.SkillName.Contains(term))
-                .OrderBy(s => s.SkillName)
+                .Where(s =>
+                    s.SkillName.Contains(term))
+                .OrderBy(s =>
+                    s.SkillName)
                 .Take(10)
                 .Select(s => new
                 {
@@ -88,24 +101,30 @@ namespace DDAC.Controllers.JobSeeker
         [HttpGet]
         public async Task<IActionResult> ViewResume()
         {
-            var userId = HttpContext.Session.GetInt32("UserID");
+            var userId =
+                HttpContext.Session.GetInt32("UserID");
 
             if (userId == null)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction(
+                    "Login",
+                    "User");
             }
 
-            var profile = await _context.JobSeekerProfiles
-                .FirstOrDefaultAsync(p => p.JobSeekerID == userId.Value);
+            var profile =
+                await _context.JobSeekerProfiles
+                    .FirstOrDefaultAsync(p =>
+                        p.JobSeekerID == userId.Value);
 
-            if (profile == null || string.IsNullOrEmpty(profile.ResumeURL))
+            if (profile == null ||
+                string.IsNullOrEmpty(profile.ResumeURL))
             {
                 return NotFound("Resume not found.");
             }
 
-            var url = await _s3Service.GetResumeUrlAsync(
-                profile.ResumeURL
-            );
+            var url =
+                await _s3Service.GetResumeUrlAsync(
+                    profile.ResumeURL);
 
             return Redirect(url);
         }
@@ -117,21 +136,30 @@ namespace DDAC.Controllers.JobSeeker
             IFormFile? resume,
             List<int>? skillIDs,
             List<string>? skillNames,
-            List<string>? skillLevels)
+            List<string>? skillLevels,
+            List<string>? qualificationNames,
+            List<string>? institutions,
+            List<int>? completionYears)
         {
-            var userId = HttpContext.Session.GetInt32("UserID");
+            var userId =
+                HttpContext.Session.GetInt32("UserID");
 
             if (userId == null)
             {
-                return RedirectToAction("Login", "User");
+                return RedirectToAction(
+                    "Login",
+                    "User");
             }
 
             profile.JobSeekerID = userId.Value;
 
-            var existingProfile = _context.JobSeekerProfiles
-                .FirstOrDefault(p => p.JobSeekerID == userId.Value);
+            var existingProfile =
+                await _context.JobSeekerProfiles
+                    .FirstOrDefaultAsync(p =>
+                        p.JobSeekerID == userId.Value);
 
-            if (resume != null && resume.Length > 0)
+            if (resume != null &&
+                resume.Length > 0)
             {
                 var allowedExtensions = new[]
                 {
@@ -140,11 +168,13 @@ namespace DDAC.Controllers.JobSeeker
                     ".docx"
                 };
 
-                var extension = Path
-                    .GetExtension(resume.FileName)
+                var extension =
+                    Path.GetExtension(
+                        resume.FileName)
                     .ToLowerInvariant();
 
-                if (!allowedExtensions.Contains(extension))
+                if (!allowedExtensions.Contains(
+                        extension))
                 {
                     ModelState.AddModelError(
                         "resume",
@@ -157,7 +187,8 @@ namespace DDAC.Controllers.JobSeeker
                     );
                 }
 
-                if (resume.Length > 5 * 1024 * 1024)
+                if (resume.Length >
+                    5 * 1024 * 1024)
                 {
                     ModelState.AddModelError(
                         "resume",
@@ -170,53 +201,21 @@ namespace DDAC.Controllers.JobSeeker
                     );
                 }
 
-                // LOCAL UPLOAD 
-                /*
-                var fileName =
-                    $"{userId.Value}_{Guid.NewGuid()}{extension}";
-
-                var uploadFolder = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot",
-                    "uploads",
-                    "resumes"
-                );
-
-                if (!Directory.Exists(uploadFolder))
-                {
-                    Directory.CreateDirectory(uploadFolder);
-                }
-
-                var filePath = Path.Combine(
-                    uploadFolder,
-                    fileName
-                );
-
-                using (var stream = new FileStream(
-                    filePath,
-                    FileMode.Create))
-                {
-                    await resume.CopyToAsync(stream);
-                }
-
-                profile.ResumeURL =
-                    "/uploads/resumes/" + fileName;
-                */
-
-                // S3 UPLOAD
                 try
                 {
-                    var s3Key = await _s3Service.UploadResumeAsync(
-                        resume,
-                        userId.Value
-                    );
+                    var s3Key =
+                        await _s3Service.UploadResumeAsync(
+                            resume,
+                            userId.Value);
+
                     profile.ResumeURL = s3Key;
                 }
                 catch (AmazonS3Exception ex)
                 {
                     ModelState.AddModelError(
                         "resume",
-                        "Unable to upload resume to S3: " + ex.Message
+                        "Unable to upload resume to S3: "
+                        + ex.Message
                     );
 
                     return View(
@@ -237,15 +236,6 @@ namespace DDAC.Controllers.JobSeeker
                         profile
                     );
                 }
-
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return View(
-                    "~/Views/JobSeeker/EditProfile.cshtml",
-                    profile
-                );
             }
 
             if (existingProfile == null)
@@ -266,45 +256,57 @@ namespace DDAC.Controllers.JobSeeker
                 existingProfile.AccommodationNeeds =
                     profile.AccommodationNeeds;
 
-                if (!string.IsNullOrEmpty(profile.ResumeURL))
+                if (!string.IsNullOrEmpty(
+                        profile.ResumeURL))
                 {
                     existingProfile.ResumeURL =
                         profile.ResumeURL;
                 }
             }
-            // Remove the user's existing skills
-            var existingSkills = await _context.JobSeekerSkills
-                .Where(s => s.JobSeekerID == userId.Value)
-                .ToListAsync();
 
-            _context.JobSeekerSkills.RemoveRange(existingSkills);
+            var existingSkills =
+                await _context.JobSeekerSkills
+                    .Where(s =>
+                        s.JobSeekerID == userId.Value)
+                    .ToListAsync();
 
+            _context.JobSeekerSkills.RemoveRange(
+                existingSkills
+            );
 
-            // Add the user's new skills
-            if (skillNames != null && skillLevels != null)
+            if (skillNames != null &&
+                skillLevels != null)
             {
-                for (int i = 0; i < skillNames.Count; i++)
+                var skillCount =
+                    Math.Min(
+                        skillNames.Count,
+                        skillLevels.Count
+                    );
+
+                for (int i = 0;
+                     i < skillCount;
+                     i++)
                 {
-                    if (i >= skillLevels.Count)
+                    var skillName =
+                        skillNames[i]?.Trim();
+
+                    var skillLevel =
+                        skillLevels[i]?.Trim();
+
+                    if (string.IsNullOrWhiteSpace(
+                            skillName) ||
+                        string.IsNullOrWhiteSpace(
+                            skillLevel))
                     {
                         continue;
                     }
 
-                    var skillName = skillNames[i]?.Trim();
-                    var skillLevel = skillLevels[i]?.Trim();
+                    var skill =
+                        await _context.Skills
+                            .FirstOrDefaultAsync(s =>
+                                s.SkillName.ToLower() ==
+                                skillName.ToLower());
 
-                    if (string.IsNullOrWhiteSpace(skillName) ||
-                        string.IsNullOrWhiteSpace(skillLevel))
-                    {
-                        continue;
-                    }
-
-                    // Find existing skill
-                    var skill = await _context.Skills
-                        .FirstOrDefaultAsync(s =>
-                            s.SkillName.ToLower() == skillName.ToLower());
-
-                    // Create skill if it doesn't exist
                     if (skill == null)
                     {
                         skill = new Skill
@@ -314,27 +316,100 @@ namespace DDAC.Controllers.JobSeeker
 
                         _context.Skills.Add(skill);
 
-                        // Save so SkillID is generated
                         await _context.SaveChangesAsync();
                     }
 
-                    // Add relationship
-                    var jobSeekerSkill = new JobSeekerSkill
-                    {
-                        JobSeekerID = userId.Value,
-                        SkillID = skill.SkillID,
-                        SkillLevel = skillLevel
-                    };
+                    var jobSeekerSkill =
+                        new JobSeekerSkill
+                        {
+                            JobSeekerID =
+                                userId.Value,
 
-                    _context.JobSeekerSkills.Add(jobSeekerSkill);
+                            SkillID =
+                                skill.SkillID,
+
+                            SkillLevel =
+                                skillLevel
+                        };
+
+                    _context.JobSeekerSkills.Add(
+                        jobSeekerSkill
+                    );
                 }
             }
 
-            // Save everything
+            var existingQualifications =
+                await _context.Qualifications
+                    .Where(q =>
+                        q.JobSeekerID == userId.Value)
+                    .ToListAsync();
+
+            _context.Qualifications.RemoveRange(
+                existingQualifications
+            );
+
+            if (qualificationNames != null &&
+                institutions != null &&
+                completionYears != null)
+            {
+                var qualificationCount =
+                    Math.Min(
+                        qualificationNames.Count,
+                        Math.Min(
+                            institutions.Count,
+                            completionYears.Count
+                        )
+                    );
+
+                for (int i = 0;
+                     i < qualificationCount;
+                     i++)
+                {
+                    var qualificationName =
+                        qualificationNames[i]?.Trim();
+
+                    var institution =
+                        institutions[i]?.Trim();
+
+                    var completionYear =
+                        completionYears[i];
+
+                    if (string.IsNullOrWhiteSpace(
+                            qualificationName) ||
+                        string.IsNullOrWhiteSpace(
+                            institution) ||
+                        completionYear <= 0)
+                    {
+                        continue;
+                    }
+
+                    var qualification =
+                        new JobSeekerQualification
+                        {
+                            JobSeekerID =
+                                userId.Value,
+
+                            QualificationName =
+                                qualificationName,
+
+                            Institution =
+                                institution,
+
+                            CompletionYear =
+                                completionYear
+                        };
+
+                    _context.Qualifications.Add(
+                        qualification
+                    );
+                }
+            }
+
             await _context.SaveChangesAsync();
-            await _context.SaveChangesAsync();
-            Console.WriteLine("DATABASE SAVE COMPLETED");
-            return RedirectToAction("EditProfile");
+
+            return RedirectToAction(
+                "EditProfile"
+            );
         }
     }
 }

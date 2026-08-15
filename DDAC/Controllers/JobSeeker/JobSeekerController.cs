@@ -165,5 +165,19 @@ namespace DDAC.Controllers.JobSeeker
 
             return View(resources);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Announcements()
+        {
+            var announcements = await _context.Announcements
+                .Where(a => a.Status == "Published")
+                .OrderByDescending(a => a.PublishedDate)
+                .ToListAsync();
+
+            return View(
+                "~/Views/JobSeeker/Announcements.cshtml",
+                announcements
+            );
+        }
     }
 }

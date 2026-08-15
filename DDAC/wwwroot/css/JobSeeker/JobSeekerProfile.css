@@ -240,6 +240,73 @@
     }
 }
 
+#qualifications {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.qualification-item {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #e1e5ea;
+    border-radius: 10px;
+    background: #fafbfc;
+}
+
+.qualification-fields {
+    display: grid;
+    grid-template-columns: 1.3fr 1.3fr 0.7fr;
+    gap: 16px;
+    padding-right: 110px;
+}
+
+.qualification-item .form-group {
+    margin-bottom: 0;
+}
+
+.qualification-item label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.qualification-year {
+    min-width: 120px;
+}
+
+.qualification-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.remove-qualification {
+    white-space: nowrap;
+}
+
+.qualification-add-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+
+    .qualification-fields {
+        grid-template-columns: 1fr;
+        padding-right: 0;
+    }
+
+    .qualification-actions {
+        position: static;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
+    }
+}
+
 @media (max-width: 600px) {
     .selected-skill {
         flex-wrap: wrap;

@@ -1,0 +1,94 @@
+﻿@model IEnumerable<DDAC.Models.Announcement>
+
+@{
+    ViewData["Title"] = "Platform Announcements";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        <div class="page-header">
+            <h1>Platform Announcements</h1>
+
+            <p>
+                Stay updated with the latest news, updates and important
+                announcements from the job portal.
+            </p>
+        </div>
+
+        <div class="content-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var announcement in Model)
+                {
+                    <div class="list-card">
+
+                          <div class="list-card-header">
+
+                            <div>
+                                <h2 class="list-card-title">
+                                    @announcement.Title
+                                </h2>
+
+                                <p class="list-card-subtitle">
+                                    Published:
+                                    @announcement.PublishedDate.ToString("dd MMM yyyy")
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="content-section">
+
+                            <p class="description-text">
+                                @announcement.Content
+                            </p>
+
+                        </div>
+
+                        <div class="job-card-footer">
+
+                            <span class="detail-item">
+                                Published:
+                                <strong>
+                                    @announcement.PublishedDate.ToString("dd MMM yyyy")
+                                </strong>
+                            </span>
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h2>No Announcements</h2>
+
+                    <p>
+                        There are currently no platform announcements.
+                        Please check again later.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>

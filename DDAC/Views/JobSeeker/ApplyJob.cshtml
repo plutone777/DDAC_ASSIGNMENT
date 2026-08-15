@@ -38,9 +38,6 @@
 
         <div class="content-card card-padding">
 
-
-            <!-- JOB INFORMATION -->
-
             <div class="content-section">
 
                 <h2>@job.JobTitle</h2>
@@ -48,7 +45,7 @@
                 @if (!string.IsNullOrWhiteSpace(job.Location))
                 {
                     <p>
-                        📍 @job.Location
+                        @job.Location
                     </p>
                 }
 
@@ -57,9 +54,6 @@
                 </p>
 
             </div>
-
-
-            <!-- RESUME -->
 
             <div class="content-section">
 
@@ -81,22 +75,15 @@
 
             </div>
 
-
-            <!-- APPLICATION FORM -->
-
             <form asp-controller="JobSeekerApplication"
                   asp-action="Apply"
                   method="post">
 
                 @Html.AntiForgeryToken()
 
-                <!-- Job ID -->
                 <input type="hidden"
                        name="jobId"
                        value="@job.JobID" />
-
-
-                <!-- COVER LETTER -->
 
                 <div class="content-section">
 
@@ -121,9 +108,6 @@
                     )
 
                 </div>
-
-
-                <!-- BUTTONS -->
 
                 <div class="action-area">
 
