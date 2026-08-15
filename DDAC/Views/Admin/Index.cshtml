@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "Overview";
+    Layout = "_AdminLayout";
+    var pendingEmployers = (List<EmployerProfile>)ViewBag.NeedsReview;
+}
+
+<div class="admin-panel">
+
+    <div class="admin-stats">
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Users</span>
+            <span class="admin-stat-value">@ViewBag.TotalUsers</span>
+            <span class="card-body">@ViewBag.ActiveUsers active</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Employer Verification</span>
+            <span class="admin-stat-value">@ViewBag.PendingEmployerCount</span>
+            <span class="card-body">pending review</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Job Postings</span>
+            <span class="admin-stat-value">@ViewBag.OpenJobPostings</span>
+            <span class="card-body">currently open</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Educational Resources</span>
+            <span class="admin-stat-value">@ViewBag.PublishedResources</span>
+            <span class="card-body">published</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Announcements</span>
+            <span class="admin-stat-value">@ViewBag.PublishedAnnouncements</span>
+            <span class="card-body">published</span>
+        </div>
+    </div>
+
+    <div class="card elev-sm" style="margin-bottom:var(--space-4)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2)">
+            <h3 style="margin:0">Needs your review</h3>
+            <a class="btn btn-secondary" asp-controller="Admin" asp-action="EmployerVerification">View all</a>
+        </div>
+        @if (!pendingEmployers.Any())
+        {
+            <p style="opacity:.7">Nothing pending - every employer has been dealt with.</p>
+        }
+        else
+        {
+            <table class="table">
+                <thead><tr><th>Company</th><th>Industry</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (var employer in pendingEmployers)
+                    {
+                        <tr>
+                            <td><strong>@employer.CompanyName</strong></td>
+                            <td>@employer.Industry</td>
+                            <td style="text-align:right">
+                                <form asp-controller="Admin" asp-action="ApproveEmployer" method="post">
+                                    <input type="hidden" name="id" value="@employer.EmployerID" />
+                                    <button type="submit" class="btn btn-primary">Approve</button>
+                                </form>
+                                <form asp-controller="Admin" asp-action="RejectEmployer" method="post">
+                                    <input type="hidden" name="id" value="@employer.EmployerID" />
+                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <div class="admin-grid">
+        <a class="admin-card" asp-controller="Admin" asp-action="UserAccounts">
+            <span class="card-kicker">Function 1</span>
+            <h3 class="card-title">Manage User Accounts</h3>
+            <p class="card-body">Suspend or reactivate accounts across every role.</p>
+        </a>
+        <a class="admin-card" asp-controller="Admin" asp-action="EmployerVerification">
+            <span class="card-kicker">Function 1</span>
+            <h3 class="card-title">Approve Employer Registration</h3>
+            <p class="card-body">Review and approve or reject pending employers.</p>
+        </a>
+        <a class="admin-card" asp-controller="Admin" asp-action="JobPostingsMonitor">
+            <span class="card-kicker">Function 2</span>
+            <h3 class="card-title">Monitor Job Postings</h3>
+            <p class="card-body">See every job vacancy posted on the platform.</p>
+        </a>
+        <a class="admin-card" asp-controller="Admin" asp-action="EducationalResourcesMonitor">
+            <span class="card-kicker">Function 2</span>
+            <h3 class="card-title">Monitor Educational Resources</h3>
+            <p class="card-body">See career resources published by advisors.</p>
+        </a>
+        <a class="admin-card" asp-controller="Admin" asp-action="SystemSettings">
+            <span class="card-kicker">Function 3</span>
+            <h3 class="card-title">System Settings</h3>
+            <p class="card-body">System configuration and accessibility defaults.</p>
+        </a>
+        <a class="admin-card" asp-controller="Admin" asp-action="Announcements">
+            <span class="card-kicker">Function 3</span>
+            <h3 class="card-title">Platform Announcements</h3>
+            <p class="card-body">Post platform-wide announcements.</p>
+        </a>
+        <a class="admin-card" asp-controller="Admin" asp-action="Reports">
+            <span class="card-kicker">Function 4</span>
+            <h3 class="card-title">Generate Reports</h3>
+            <p class="card-body">User activity and employment statistics.</p>
+        </a>
+    </div>
+
+</div>

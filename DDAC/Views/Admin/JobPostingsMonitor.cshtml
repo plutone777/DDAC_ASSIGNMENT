@@ -1,0 +1,73 @@
+@model List<JobVacancy>
+
+@{
+    ViewData["Title"] = "Job Postings";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-panel" data-filter-scope>
+    <div class="admin-toolbar">
+        <input class="input" type="text" placeholder="Search title or location" data-filter-input />
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab active" data-filter-tab data-filter-group="status" data-filter-value="All">All</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Open">Open</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Draft">Draft</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Closed">Closed</button>
+        </div>
+        <span style="margin-left:auto;font-size:13px;color:var(--color-neutral-700)"><span data-filter-count>@Model.Count</span> postings</span>
+    </div>
+
+    <div class="card elev-sm">
+        @if (!Model.Any())
+        {
+            <div class="admin-empty"><p>No job postings found.</p></div>
+        }
+        else
+        {
+            <table class="table" data-filter-table>
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Location</th>
+                        <th>Employment Type</th>
+                        <th>Posted</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var job in Model)
+                    {
+                        var tagClass = job.Status == "Open" ? "tag-accent-2" : job.Status == "Closed" ? "tag-neutral" : "tag-outline";
+                        <tr style="cursor:pointer"
+                            data-search="@(job.JobTitle + " " + job.Location)" data-status="@job.Status"
+                            data-drawer-row
+                            data-drawer-title="@job.JobTitle"
+                            data-drawer-subtitle="Job posting"
+                            data-drawer-fields="Job Title:jobtitle,Location:location,Employment Type:employmenttype,Salary:salary,Posted:posted,Closing:closing,Status:status,Description:description,Accessibility Features:accessibility,Accommodations Available:accommodations"
+                            data-jobtitle="@job.JobTitle"
+                            data-location="@job.Location"
+                            data-employmenttype="@job.EmploymentType"
+                            data-salary="@job.Salary.ToString("C0")"
+                            data-posted="@job.PostedDate.ToString("d MMM yyyy")"
+                            data-closing="@job.ClosingDate.ToString("d MMM yyyy")"
+                            data-status="@job.Status"
+                            data-description="@job.Description"
+                            data-accessibility="@job.AccessibilityFeatures"
+                            data-accommodations="@job.AccommodationsAvailable"
+                            data-drawer-delete-action="@Url.Action("DeleteJobPosting", "Admin")"
+                            data-drawer-delete-id="@job.JobID"
+                            data-drawer-delete-label="Remove posting"
+                            data-drawer-delete-confirm="Remove this job posting? This cannot be undone.">
+                            <td><strong>@job.JobTitle</strong></td>
+                            <td>@job.Location</td>
+                            <td>@job.EmploymentType</td>
+                            <td>@job.PostedDate.ToString("d MMM yyyy")</td>
+                            <td><span class="tag @tagClass">@job.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+        }
+    </div>
+</div>

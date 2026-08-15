@@ -1,0 +1,95 @@
+@model List<DDAC.Models.Admin.UserAccountRow>
+@using DDAC.Models.Admin
+
+@{
+    ViewData["Title"] = "User Accounts";
+    Layout = "_AdminLayout";
+    var roles = Model.Select(r => r.User.Role).Distinct().OrderBy(r => r).ToList();
+}
+
+<div class="admin-panel" data-filter-scope>
+    <div class="admin-toolbar">
+        <input class="input" type="text" placeholder="Search name or email" data-filter-input />
+
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab active" data-filter-tab data-filter-group="role" data-filter-value="All">All</button>
+            @foreach (var role in roles)
+            {
+                <button type="button" class="admin-tab" data-filter-tab data-filter-group="role" data-filter-value="@role">@role</button>
+            }
+        </div>
+
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab active" data-filter-tab data-filter-group="status" data-filter-value="All">All statuses</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Active">Active</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Suspended">Suspended</button>
+        </div>
+
+        <span style="margin-left:auto;font-size:13px;color:var(--color-neutral-700)"><span data-filter-count>@Model.Count</span> accounts</span>
+    </div>
+
+    <div class="card elev-sm">
+        @if (!Model.Any())
+        {
+            <div class="admin-empty">
+                <p>No user accounts found yet.</p>
+            </div>
+        }
+        else
+        {
+            <table class="table" data-filter-table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Posts</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model)
+                    {
+                        var user = row.User;
+                        var tagClass = user.Status == "Active" ? "tag-accent-2" : "tag-neutral";
+                        <tr data-search="@(user.FullName + " " + user.Email)" data-role="@user.Role" data-status="@user.Status"
+                            data-user-link="@Url.Action("UserDetail", "Admin", new { id = user.UserID })">
+                            <td><strong>@user.FullName</strong></td>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                            <td>@row.PostCount</td>
+                            <td><span class="tag @tagClass">@user.Status</span></td>
+                            <td>@user.CreatedDate.ToString("d MMM yyyy")</td>
+                            <td style="text-align:right">
+                                @if (user.Role != "Admin")
+                                {
+                                    <form asp-controller="Admin" asp-action="ToggleUserStatus" method="post">
+                                        <input type="hidden" name="id" value="@user.UserID" />
+                                        <button type="submit" class="btn btn-secondary">@(user.Status == "Active" ? "Suspend" : "Reactivate")</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="admin-empty" data-filter-empty style="display:none">
+                <p>Nothing matches that.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('tr[data-user-link]').forEach(function (row) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function (e) {
+                if (e.target.closest('form')) return;
+                window.location.href = row.getAttribute('data-user-link');
+            });
+        });
+    </script>
+}

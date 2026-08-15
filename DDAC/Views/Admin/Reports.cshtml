@@ -1,0 +1,27 @@
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-panel">
+
+    <div class="admin-stats">
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">User Activity</span>
+            <span class="admin-stat-value">@ViewBag.TotalUsers</span>
+            <span class="card-body">total users - @ViewBag.ActiveUsers active, @ViewBag.SuspendedUsers suspended</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Employer Verification</span>
+            <span class="admin-stat-value">@ViewBag.TotalEmployers</span>
+            <span class="card-body">total employers - @ViewBag.ApprovedEmployers approved, @ViewBag.PendingEmployers pending</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Employment Statistics</span>
+            <span class="admin-stat-value">@ViewBag.TotalJobPostings</span>
+            <span class="card-body">total job postings - @ViewBag.OpenJobPostings currently open</span>
+            <a class="btn btn-primary" style="margin-top:var(--space-2)" asp-controller="Admin" asp-action="GenerateEmploymentReport">Generate Report</a>
+        </div>
+    </div>
+
+</div>

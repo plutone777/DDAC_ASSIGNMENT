@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Job Seeker Dashboard";
+}
+
+<div class="container mt-5">
+
+    <div class="text-center mb-5">
+        <h1>Welcome, @Context.Session.GetString("FullName")!</h1>
+        <p class="lead">Find opportunities and build your career.</p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 p-4 text-center">
+                <h4>Browse Jobs</h4>
+                <p>Find job opportunities that match your skills.</p>
+                <a asp-controller="JobVacancy"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Browse Jobs
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 p-4 text-center">
+                <h4>My Applications</h4>
+                <p>View and track your job applications.</p>
+                <a asp-controller="JobApplication"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    View Applications
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 p-4 text-center">
+                <h4>My Profile</h4>
+                <p>Update your personal information and skills.</p>
+                <a asp-controller="JobSeeker"
+                   asp-action="Profile"
+                   class="btn btn-primary">
+                    View Profile
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 p-4 text-center">
+                <h4>Career Guidance</h4>
+                <p>Get advice and recommendations for your career.</p>
+                <a asp-controller="CareerGuidance"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Get Guidance
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
