@@ -1,0 +1,48 @@
+﻿@model DDAC.Models.Inquiry
+@{
+    ViewData["Title"] = "Respond to inquiry";
+}
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>Respond to inquiry</h1>
+            <p>Write a reply</p>
+        </div>
+
+        <div class="content-card card-padding">
+            <div class="content-section">
+                <h2>@Model.Subject</h2>
+                <p>@Model.Message</p>
+            </div>
+
+            <div class="content-section">
+                <span class="detail-label">Received</span>
+                <span class="detail-value">@Model.CreatedDate.ToString("dd MMM yyyy")</span>
+            </div>
+
+            <div class="content-section">
+                <span class="detail-label">Status</span>
+                <span class="detail-value">@Model.Status</span>
+            </div>
+
+            <form asp-action="RespondInquiry" method="post">
+                <input type="hidden" asp-for="InquiryID" />
+
+                <div class="form-group">
+                    <label asp-for="Response">Your response</label>
+                    <textarea asp-for="Response" class="form-input" rows="5" required></textarea>
+                </div>
+
+                <div class="action-area">
+                    <a class="secondary-button" asp-action="Inquiries">Cancel</a>
+                    <button type="submit" class="primary-button">Send response</button>
+                </div>
+            </form>
+
+        </div>
+    </main>
+</div>

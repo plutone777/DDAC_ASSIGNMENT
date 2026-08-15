@@ -178,7 +178,7 @@ namespace DDAC.Controllers
                 "Your career guidance request has been submitted successfully.";
 
             return RedirectToAction(
-                "RequestGuidance",
+                "MyRequests",
                 "Inquiry"
             );
         }

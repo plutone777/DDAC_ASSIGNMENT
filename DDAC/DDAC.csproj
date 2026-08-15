@@ -19,9 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Employer\" />
-    <Folder Include="Controllers\CareerAdvisor\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Views\CareerAdvisor\" />
     <Folder Include="Views\Employer\" />
     <Folder Include="wwwroot\uploads\resumes\" />
   </ItemGroup>
