@@ -1,0 +1,22 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    string Active(string targetController, params string[] targetActions) =>
+        controller == targetController && targetActions.Contains(action ?? string.Empty) ? "active" : string.Empty;
+}
+
+<aside class="employer-sidebar">
+    <div class="employer-sidebar__identity">
+        <span class="employer-sidebar__eyebrow">Employer workspace</span>
+        <strong>@(Context.Session.GetString("FullName") ?? "Employer")</strong>
+    </div>
+    <nav class="nav nav-pills flex-column gap-1" aria-label="Employer navigation">
+        <a class="nav-link @Active("Employer", "Index")" asp-controller="Employer" asp-action="Index">Dashboard</a>
+        <a class="nav-link @Active("EmployerProfile", "Profile", "EditProfile")" asp-controller="EmployerProfile" asp-action="Profile">Company profile</a>
+        <a class="nav-link @Active("JobVacancy", "Vacancies", "CreateVacancy", "EditVacancy", "VacancyDetails")" asp-controller="JobVacancy" asp-action="Vacancies">Vacancies</a>
+        <a class="nav-link @Active("EmployerApplication", "Applications", "ApplicationDetails", "CreateInterview")" asp-controller="EmployerApplication" asp-action="Applications">Applications</a>
+        <a class="nav-link @Active("Employer", "HiringGuidance")" asp-controller="Employer" asp-action="HiringGuidance">Hiring guidance</a>
+        <a class="nav-link @Active("EmployerInquiry", "Inquiries", "CreateInquiry", "InquiryDetails")" asp-controller="EmployerInquiry" asp-action="Inquiries">Advisor inquiries</a>
+    </nav>
+</aside>
+

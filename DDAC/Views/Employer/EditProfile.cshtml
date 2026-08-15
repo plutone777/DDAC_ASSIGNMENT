@@ -1,0 +1,23 @@
+@model EmployerProfile
+@{ ViewData["Title"] = "Edit Company Profile"; }
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell">
+    <partial name="~/Views/Employer/_EmployerSidebar.cshtml" />
+    <section class="employer-content">
+        @if (TempData["Info"] is string info) { <div class="alert alert-info">@info</div> }
+        <div class="employer-page-heading"><div><span class="employer-eyebrow">Company identity</span><h1>Edit company profile</h1><p>Keep your public employer information current and clear.</p></div></div>
+        <form asp-action="EditProfile" method="post" class="employer-panel employer-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row g-3">
+                <div class="col-md-7"><label asp-for="CompanyName" class="form-label"></label><input asp-for="CompanyName" class="form-control" /><span asp-validation-for="CompanyName" class="text-danger"></span></div>
+                <div class="col-md-5"><label asp-for="Industry" class="form-label"></label><input asp-for="Industry" class="form-control" /><span asp-validation-for="Industry" class="text-danger"></span></div>
+                <div class="col-12"><label asp-for="CompanyDescription" class="form-label">Company description</label><textarea asp-for="CompanyDescription" rows="5" class="form-control"></textarea><span asp-validation-for="CompanyDescription" class="text-danger"></span></div>
+                <div class="col-md-7"><label asp-for="Address" class="form-label"></label><input asp-for="Address" class="form-control" /><span asp-validation-for="Address" class="text-danger"></span></div>
+                <div class="col-md-5"><label asp-for="Website" class="form-label"></label><input asp-for="Website" class="form-control" placeholder="https://example.com" /><span asp-validation-for="Website" class="text-danger"></span></div>
+            </div>
+            <div class="d-flex gap-2 mt-4"><button class="btn btn-primary" type="submit">Save profile</button><a class="btn btn-outline-secondary" asp-action="Profile">Cancel</a></div>
+        </form>
+    </section>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

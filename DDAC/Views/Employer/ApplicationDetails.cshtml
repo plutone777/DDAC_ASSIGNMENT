@@ -1,0 +1,25 @@
+@model JobApplication
+@{
+    ViewData["Title"] = "Application Details";
+    var job = ViewBag.Job as JobVacancy;
+    var applicant = ViewBag.Applicant as User;
+    var interviews = ViewBag.Interviews as List<JobInterview> ?? new();
+    var statuses = ViewBag.Statuses as IReadOnlyList<string> ?? Array.Empty<string>();
+}
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
+    @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+    @if (TempData["Error"] is string error) { <div class="alert alert-danger">@error</div> }
+    <div class="employer-page-heading"><div><span class="employer-eyebrow">@(job?.JobTitle ?? "Application")</span><h1>@(applicant?.FullName ?? "Applicant")</h1><p>Applied @Model.ApplicationDate.ToString("dd MMM yyyy, h:mm tt")</p></div><a class="btn btn-primary" asp-action="CreateInterview" asp-route-applicationId="@Model.ApplicationID">Schedule interview</a></div>
+    <div class="employer-detail-grid">
+        <article class="employer-panel employer-detail-main">
+            <h2>Candidate</h2><dl class="row"><dt class="col-sm-3">Email</dt><dd class="col-sm-9">@(applicant?.Email ?? "Not available")</dd><dt class="col-sm-3">Phone</dt><dd class="col-sm-9">@(applicant?.PhoneNumber ?? "Not provided")</dd><dt class="col-sm-3">Resume</dt><dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.ResumeURL) ? "Not attached" : "Resume attached to this application")</dd></dl>
+            <h2>Cover letter</h2><p class="preserve-lines">@(string.IsNullOrWhiteSpace(Model.CoverLetter) ? "No cover letter supplied." : Model.CoverLetter)</p>
+            <h2>Interviews</h2>
+            @if (interviews.Count == 0) { <p class="text-muted">No interviews scheduled.</p> }
+            else { @foreach (var interview in interviews) { <div class="interview-card"><div><strong>@interview.InterviewDate.ToString("dd MMM yyyy, h:mm tt")</strong><span>@interview.InterviewType · @interview.Status</span></div><p>@(string.IsNullOrWhiteSpace(interview.Location) ? "Location to be confirmed" : interview.Location)</p></div> } }
+        </article>
+        <aside class="employer-panel employer-detail-aside"><div><span>Current status</span><strong class="status-pill">@Model.Status</strong></div><form asp-action="UpdateStatus" asp-route-id="@Model.ApplicationID" method="post"><label for="status" class="form-label">Update status</label><select id="status" name="status" class="form-select mb-2">@foreach (var status in statuses) { <option value="@status" selected="@(status == Model.Status)">@status</option> }</select><button class="btn btn-outline-primary w-100" type="submit">Save status</button></form><a asp-action="Applications">Back to applications</a></aside>
+    </div>
+</section></div>

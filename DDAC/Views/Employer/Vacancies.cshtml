@@ -1,0 +1,36 @@
+@model IEnumerable<JobVacancy>
+@{ ViewData["Title"] = "Vacancies"; var statuses = ViewBag.Statuses as IReadOnlyList<string> ?? Array.Empty<string>(); }
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell">
+    <partial name="~/Views/Employer/_EmployerSidebar.cshtml" />
+    <section class="employer-content">
+        @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+        <div class="employer-page-heading">
+            <div><span class="employer-eyebrow">Opportunities</span><h1>Vacancies</h1><p>Create accessible roles and control when they are visible to job seekers.</p></div>
+            <a class="btn btn-primary" asp-action="CreateVacancy">Create vacancy</a>
+        </div>
+        <form method="get" class="employer-filter mb-3">
+            <label for="status" class="visually-hidden">Filter by status</label>
+            <select id="status" name="status" class="form-select" onchange="this.form.submit()">
+                <option value="">All statuses</option>
+                @foreach (var status in statuses) { <option value="@status" selected="@(ViewBag.SelectedStatus == status)">@status</option> }
+            </select>
+        </form>
+        <div class="employer-panel p-0 overflow-hidden">
+            @if (!Model.Any())
+            {
+                <div class="employer-empty"><h2>No vacancies found</h2><p>Create a vacancy or change the selected filter.</p></div>
+            }
+            else
+            {
+                <div class="table-responsive"><table class="table align-middle employer-table mb-0"><thead><tr><th>Role</th><th>Type</th><th>Closing</th><th>Salary</th><th>Status</th><th></th></tr></thead><tbody>
+                @foreach (var vacancy in Model)
+                {
+                    <tr><td><strong>@vacancy.JobTitle</strong><small>@(string.IsNullOrWhiteSpace(vacancy.Location) ? "Location flexible" : vacancy.Location)</small></td><td>@vacancy.EmploymentType</td><td>@vacancy.ClosingDate.ToString("dd MMM yyyy")</td><td>@vacancy.Salary.ToString("C")</td><td><span class="status-pill">@vacancy.Status</span></td><td><a asp-action="VacancyDetails" asp-route-id="@vacancy.JobID">Manage</a></td></tr>
+                }
+                </tbody></table></div>
+            }
+        </div>
+    </section>
+</div>
