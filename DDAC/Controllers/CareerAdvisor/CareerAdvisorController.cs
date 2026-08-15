@@ -295,7 +295,7 @@ namespace DDAC.Controllers.CareerAdvisor
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateRecommendation(int jobSeekerId, int trainingId, string reason)
+        public async Task<IActionResult> CreateRecommendation(int jobSeekerId, int trainingId, string reason, string recommendationType)
         {
             var userId = HttpContext.Session.GetInt32("UserID");
             if (userId == null)
@@ -313,7 +313,7 @@ namespace DDAC.Controllers.CareerAdvisor
             {
                 AdvisorID = userId.Value,
                 JobSeekerID = jobSeekerId,
-                RecommendationType = "Training",
+                RecommendationType = recommendationType,
                 Title = program.Title,
                 Description = program.Description,
                 Reason = reason,
