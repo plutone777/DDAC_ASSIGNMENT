@@ -1,0 +1,91 @@
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    string NavClass(string action) => currentAction == action ? "admin-nav-link active" : "admin-nav-link";
+
+    string fontSize = ViewBag.FontSize ?? "Medium";
+    bool highContrast = ViewBag.HighContrast ?? false;
+    bool reducedMotion = ViewBag.ReducedMotion ?? false;
+    bool screenReaderHints = ViewBag.ScreenReaderHints ?? false;
+
+    var bodyClasses = new List<string> { "admin-body" };
+    bodyClasses.Add(fontSize == "Large" ? "font-large" : fontSize == "Small" ? "font-small" : "font-medium");
+    if (highContrast) bodyClasses.Add("high-contrast");
+    if (reducedMotion) bodyClasses.Add("reduced-motion");
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Admin</title>
+    <link rel="stylesheet" href="~/css/Admin/admin-design.css" asp-append-version="true" />
+</head>
+<body class="@string.Join(" ", bodyClasses)" data-flash="@TempData["Flash"]" data-screen-reader-hints="@screenReaderHints.ToString().ToLower()">
+    <div class="admin-shell">
+
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <div class="admin-brand-badge">A</div>
+                <div class="admin-brand-text">
+                    <span class="admin-brand-name">Application</span>
+                    <span class="admin-brand-sub">Admin console</span>
+                </div>
+            </div>
+
+            <nav class="admin-nav">
+                <a class="@NavClass("Index")" asp-controller="Admin" asp-action="Index">Dashboard</a>
+                <a class="@NavClass("UserAccounts")" asp-controller="Admin" asp-action="UserAccounts">User Accounts</a>
+                <a class="@NavClass("EmployerVerification")" asp-controller="Admin" asp-action="EmployerVerification">Employer Verification</a>
+                <a class="@NavClass("JobPostingsMonitor")" asp-controller="Admin" asp-action="JobPostingsMonitor">Job Postings</a>
+                <a class="@NavClass("EducationalResourcesMonitor")" asp-controller="Admin" asp-action="EducationalResourcesMonitor">Educational Resources</a>
+                <a class="@NavClass("SystemSettings")" asp-controller="Admin" asp-action="SystemSettings">System Settings</a>
+                <a class="@NavClass("Announcements")" asp-controller="Admin" asp-action="Announcements">Announcements</a>
+                <a class="@NavClass("Reports")" asp-controller="Admin" asp-action="Reports">Reports</a>
+            </nav>
+
+            <a class="admin-user" asp-controller="User" asp-action="Logout" title="Log out" style="text-decoration:none;cursor:pointer">
+                <div class="admin-user-badge">A</div>
+                <div class="admin-user-text">
+                    <span class="admin-user-name">@Context.Session.GetString("FullName")</span>
+                    <span class="admin-user-role">Platform administrator - Log out</span>
+                </div>
+            </a>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="admin-crumb">InclusiveEmployment / <span class="current">@ViewData["Title"]</span></div>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap">
+                    <h1 style="margin:0">@ViewData["Title"]</h1>
+                    <div class="admin-search">
+                        <input class="input" type="text" placeholder="Jump to a function..." data-admin-search-input />
+                        <div class="admin-search-results" data-admin-search-results></div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                @RenderBody()
+            </div>
+        </main>
+
+    </div>
+
+    <div class="admin-drawer-overlay"></div>
+    <div class="admin-drawer">
+        <div class="admin-drawer-header">
+            <div>
+                <h2 class="admin-drawer-title">Details</h2>
+                <div class="admin-drawer-subtitle"></div>
+            </div>
+            <button type="button" class="admin-drawer-close" data-drawer-close aria-label="Close">&times;</button>
+        </div>
+        <div class="admin-drawer-body"></div>
+        <div class="admin-drawer-footer"></div>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@ namespace DDAC.Controllers
 {
     public class UserController : Controller
     {
+
         private readonly ApplicationDbContext _context;
 
         public UserController(ApplicationDbContext context)
@@ -23,6 +24,13 @@ namespace DDAC.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(User user, string password)
         {
+            // Admin accounts must be provisioned directly in the database, never
+            // through public self-registration.
+            if (user.Role == "Admin")
+            {
+                ModelState.AddModelError("Role", "That role is not available for self-registration.");
+            }
+
             if (!ModelState.IsValid)
             {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -101,11 +109,16 @@ namespace DDAC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Logout()
+        public IActionResult LogoutJS()
         {
             HttpContext.Session.Clear();
 
             return RedirectToAction("Login", "User");
+        }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
 
     }

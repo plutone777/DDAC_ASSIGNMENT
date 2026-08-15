@@ -1,0 +1,83 @@
+@model List<SystemSetting>
+
+@{
+    ViewData["Title"] = "System Settings";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-panel">
+    <div class="card elev-sm">
+        @if (!Model.Any())
+        {
+            <div class="admin-empty">
+                <p>No settings found.</p>
+                <p style="font-size:12px">Add rows to the SystemSettings table (System or Accessibility category) to manage them here.</p>
+            </div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Setting</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th>Last Updated</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var setting in Model)
+                    {
+                        var tagClass = setting.SettingCategory == "Accessibility" ? "tag-accent-2" : "tag-accent";
+                        var isNumeric = int.TryParse(setting.SettingValue, out _);
+                        var isBoolean = setting.SettingValue.Equals("true", StringComparison.OrdinalIgnoreCase)
+                            || setting.SettingValue.Equals("false", StringComparison.OrdinalIgnoreCase);
+                        var isFontSize = setting.SettingKey == "DefaultFontSize";
+
+                        <tr>
+                            <td><span class="tag @tagClass">@setting.SettingCategory</span></td>
+                            <td><strong>@setting.SettingKey</strong></td>
+                            <td>
+                                @* The <form> only wraps the editable cell, not the whole row -
+                                   a <form> can't legally be a direct child of <tr>. *@
+                                <form asp-controller="Admin" asp-action="UpdateSystemSetting" method="post">
+                                    <input type="hidden" name="settingID" value="@setting.SettingID" />
+
+                                    @if (isNumeric)
+                                    {
+                                        <input class="input" type="number" name="settingValue" value="@setting.SettingValue" style="min-width:100px" />
+                                    }
+                                    else if (isBoolean)
+                                    {
+                                        <select class="input" name="settingValue" style="min-width:120px">
+                                            <option value="true" selected="@(setting.SettingValue.Equals("true", StringComparison.OrdinalIgnoreCase))">True</option>
+                                            <option value="false" selected="@(setting.SettingValue.Equals("false", StringComparison.OrdinalIgnoreCase))">False</option>
+                                        </select>
+                                    }
+                                    else if (isFontSize)
+                                    {
+                                        <select class="input" name="settingValue" style="min-width:120px">
+                                            <option value="Small" selected="@(setting.SettingValue == "Small")">Small</option>
+                                            <option value="Medium" selected="@(setting.SettingValue == "Medium")">Medium</option>
+                                            <option value="Large" selected="@(setting.SettingValue == "Large")">Large</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <input class="input" name="settingValue" value="@setting.SettingValue" style="min-width:140px" />
+                                    }
+
+                                    <button type="submit" class="btn btn-secondary">Save</button>
+                                </form>
+                            </td>
+                            <td style="font-size:12.5px;color:var(--color-neutral-700)">@setting.Description</td>
+                            <td>@setting.UpdatedDate.ToString("d MMM yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

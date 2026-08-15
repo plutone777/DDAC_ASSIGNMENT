@@ -7,26 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Admin\**" />
     <Compile Remove="Models\CareerAdvisor\**" />
     <Compile Remove="Models\Employer\**" />
-    <Content Remove="Models\Admin\**" />
     <Content Remove="Models\CareerAdvisor\**" />
     <Content Remove="Models\Employer\**" />
-    <EmbeddedResource Remove="Models\Admin\**" />
     <EmbeddedResource Remove="Models\CareerAdvisor\**" />
     <EmbeddedResource Remove="Models\Employer\**" />
-    <None Remove="Models\Admin\**" />
     <None Remove="Models\CareerAdvisor\**" />
     <None Remove="Models\Employer\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Employer\" />
     <Folder Include="Controllers\CareerAdvisor\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Views\Admin\" />
     <Folder Include="Views\CareerAdvisor\" />
     <Folder Include="Views\Employer\" />
     <Folder Include="wwwroot\uploads\resumes\" />

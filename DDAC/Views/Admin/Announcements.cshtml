@@ -1,0 +1,66 @@
+@model List<Announcement>
+
+@{
+    ViewData["Title"] = "Announcements";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-panel" data-filter-scope>
+    <div class="admin-toolbar">
+        <input class="input" type="text" placeholder="Search title or content" data-filter-input />
+        <a class="btn btn-primary" style="margin-left:auto" asp-controller="Admin" asp-action="CreateAnnouncement">Post announcement</a>
+    </div>
+
+    <div class="card elev-sm">
+        @if (!Model.Any())
+        {
+            <div class="admin-empty"><p>No announcements posted yet.</p></div>
+        }
+        else
+        {
+            <table class="table" data-filter-table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Published</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var announcement in Model)
+                    {
+                        var tagClass = announcement.Status == "Published" ? "tag-accent-2" : announcement.Status == "Archived" ? "tag-neutral" : "tag-outline";
+                        <tr style="cursor:pointer" data-search="@(announcement.Title + " " + announcement.Content)"
+                            data-announcement-link="@Url.Action("EditAnnouncement", "Admin", new { id = announcement.AnnouncementID })">
+                            <td><strong>@announcement.Title</strong></td>
+                            <td style="max-width:360px">@announcement.Content</td>
+                            <td>@announcement.PublishedDate.ToString("d MMM yyyy")</td>
+                            <td><span class="tag @tagClass">@announcement.Status</span></td>
+                            <td style="text-align:right">
+                                <form asp-controller="Admin" asp-action="DeleteAnnouncement" method="post"
+                                      onsubmit="return confirm('Remove this announcement? This cannot be undone.');">
+                                    <input type="hidden" name="id" value="@announcement.AnnouncementID" />
+                                    <button type="submit" class="btn btn-danger">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('tr[data-announcement-link]').forEach(function (row) {
+            row.addEventListener('click', function (e) {
+                if (e.target.closest('form')) return;
+                window.location.href = row.getAttribute('data-announcement-link');
+            });
+        });
+    </script>
+}
