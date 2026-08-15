@@ -1,0 +1,62 @@
+﻿@model List<DDAC.Models.CareerGuidance>
+@{
+    ViewData["Title"] = "Guidance requests";
+}
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>Guidance Requests</h1>
+            <p>Career advice, resume reviews and interview preparation requested by Job Seekers</p>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h2>No requests yet</h2>
+                <p>Requests submitted by Job Seekers will appear here</p>
+            </div>
+        }
+        else
+        {
+            <div class="content-list">
+                @foreach (var item in Model)
+                {
+                    <div class="list-card">
+                        <div class="list-card-header">
+
+                            <div>
+                                <h3 class="list-card-title">@item.Subject</h3>
+                                <p class="list-card-subtitle">
+                                    @item.GuidanceType · @item.GuidanceDate.ToString("dd MMM yyyy")
+                                </p>
+                            </div>
+                            <span class="tag tag-status">@item.Status</span>
+                        </div>
+
+                        <p class="description-text">@item.GuidanceNotes</p>
+
+                        <div class="action-area">
+                            @if (item.Status == "Requested")
+                            {
+                                <form asp-action="StartGuidance" method="post">
+                                    <input type="hidden" name="id" value="@item.GuidanceID"/>
+                                    <button type="submit" class="secondary-button">Start review</button>
+                                </form>
+                            }
+
+                            @if (item.Status != "Completed")
+                            {
+                                <a class="secondary-button" asp-action="RespondGuidance" asp-route-id="@item.GuidanceID">Respond</a>
+                            }
+                        </div>
+                    </div>
+
+                }
+            </div>
+        }
+    </main>
+</div>

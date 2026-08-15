@@ -364,6 +364,74 @@ namespace DDAC.Controllers.CareerAdvisor
         }
 
 
+
+        //Guidance requests
+
+        [HttpGet]
+        public async Task<IActionResult> GuidanceRequests()
+        {
+            var userId = HttpContext.Session.GetInt32("UserID");
+            var role = HttpContext.Session.GetString("Role");
+            if (userId == null || role != "CareerAdvisor")
+            {
+                return RedirectToAction("Login", "User");
+            }
+
+            var requests = await _context.CareerGuidances
+                .Where(g => g.AdvisorID == userId.Value)
+                .OrderByDescending(g => g.GuidanceDate)
+                .ToListAsync();
+
+            return View(requests);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartGuidance(int id)
+        {
+            var request = await _context.CareerGuidances.FindAsync(id);
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            request.Status = "In Progress";
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("GuidanceRequests");
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> RespondGuidance(int id)
+        {
+            var request = await _context.CareerGuidances.FindAsync(id);
+            if (request == null)
+            {
+                return NotFound();
+            }
+
+            return View(request);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RespondGuidance(int id, string response)
+        {
+            var request = await _context.CareerGuidances.FindAsync(id);
+            if (request == null)
+            {
+                return NotFound();
+            }
+            request.GuidanceNotes = request.GuidanceNotes
+                + "\n\n--- Advisor response ---\n"
+                + response;
+
+            request.Status = "Completed";
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("GuidanceRequests");
+        }
     }
 
 }
