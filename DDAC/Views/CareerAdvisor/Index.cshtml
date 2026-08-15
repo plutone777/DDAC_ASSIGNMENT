@@ -1,6 +1,7 @@
 ﻿@model List<DDAC.Models.CareerResource>
 @{
     ViewData["Title"] = "My career resources";
+    var announcements = ViewBag.Announcements as List<DDAC.Models.Announcement>;
 }
 
 <link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
@@ -13,6 +14,16 @@
             <h1>My career resources</h1>
             <p>Guides and materials you have published for Job seekers</p>
         </div>
+
+        @if (announcements != null && announcements.Any())
+        {
+            @foreach (var note in announcements)
+            {
+                <div class="alert-message success-message">
+                    <strong>@note.Title</strong> — @note.Content
+                </div>
+            }
+        }
 
         <div class="search-bar">
             <a class="primary-button" asp-action="Create">Add new resource</a>

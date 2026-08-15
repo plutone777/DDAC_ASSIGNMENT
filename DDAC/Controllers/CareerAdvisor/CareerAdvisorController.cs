@@ -30,10 +30,16 @@ namespace DDAC.Controllers.CareerAdvisor
             var resources = await _context.CareerResources
                 .Where(r => r.AdvisorID == userId.Value)
                 .ToListAsync();
+
+            ViewBag.Announcements = await _context.Announcements
+                .Where(a => a.Status == "Published")
+                .OrderByDescending(a => a.PublishedDate)
+                .Take(3)
+                .ToListAsync();
             return View(resources);
         }
 
-        
+
 
         [HttpGet]
         public IActionResult Create()
