@@ -22,8 +22,9 @@ namespace DDAC.Controllers.CareerAdvisor
         public async Task<IActionResult> Index()
         {
             var userId = HttpContext.Session.GetInt32("UserID");
+            var role = HttpContext.Session.GetString("Role");
 
-            if (userId == null)
+            if (userId == null || role != "CareerAdvisor")
             {
                 return RedirectToAction("Login", "User");
             }
@@ -223,7 +224,9 @@ namespace DDAC.Controllers.CareerAdvisor
         public async Task<IActionResult> Inquiries()
         {
             var userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
+            var role = HttpContext.Session.GetString("Role");
+
+            if (userId == null || role != "CareerAdvisor")
             {
                 return RedirectToAction("Login", "User");
             }
@@ -275,7 +278,9 @@ namespace DDAC.Controllers.CareerAdvisor
         public async Task<IActionResult> Recommendations()
         {
             var userId = HttpContext.Session.GetInt32("UserID");
-            if (userId == null)
+            var role = HttpContext.Session.GetString("Role");
+
+            if (userId == null || role != "CareerAdvisor")
             {
                 return RedirectToAction("Login", "User");
             }
