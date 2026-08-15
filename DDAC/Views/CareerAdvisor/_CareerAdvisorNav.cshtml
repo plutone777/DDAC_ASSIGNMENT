@@ -4,6 +4,7 @@
         <h2>Job Portal</h2>
         <p>Career Advisor</p>
     </div>
+
     <nav class="sidebar-nav" aria-label="Career advisor navigation">
         <a class="nav-button" asp-controller="CareerAdvisor" asp-action="Index">My Resources</a>
         <a class="nav-button" asp-controller="CareerAdvisor" asp-action="TrainingPrograms">Training Programs</a>
@@ -11,4 +12,8 @@
         <a class="nav-button" asp-controller="CareerAdvisor" asp-action="GuidanceRequests">Guidance Requests</a>
         <a class="nav-button" asp-controller="CareerAdvisor" asp-action="Recommendations">Recommendations</a>
     </nav>
+
+    <div class="sidebar-footer">
+        <a class="nav-button" asp-controller="User" asp-action="Logout">Log out</a>
+    </div>
 </aside>

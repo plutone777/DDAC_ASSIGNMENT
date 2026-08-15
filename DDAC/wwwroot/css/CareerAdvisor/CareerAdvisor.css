@@ -278,3 +278,15 @@
         padding: 20px;
     }
 }
+
+.advisor-sidebar {
+    width: 220px;
+    padding: 20px;
+    background-color: #2d3a3e;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+}
