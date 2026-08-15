@@ -1,11 +1,12 @@
 ﻿.profile-form-container {
     max-width: 850px;
     margin: 0 auto;
+    font-family: "Figtree", system-ui, sans-serif;
 }
 
 .form-section {
-    padding: 25px 0;
-    border-bottom: 1px solid #e2e6ea;
+    padding: 26px 0;
+    border-bottom: 1px solid rgba(32, 30, 29, 0.16);
 }
 
     .form-section:first-child {
@@ -22,16 +23,16 @@
 
     .form-group label {
         display: block;
-        margin-bottom: 8px;
-        color: #3f4852;
-        font-size: 14px;
-        font-weight: 600;
+        margin-bottom: 6px;
+        color: #474238;
+        font-size: 12px;
+        font-weight: 500;
     }
 
 .validation-message {
     display: block;
     margin-top: 6px;
-    color: #d9534f;
+    color: #8c491a;
     font-size: 13px;
 }
 
@@ -66,26 +67,27 @@
 
 .skill-suggestions {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 6px);
     left: 0;
     right: 0;
     z-index: 10;
-    background-color: #ffffff;
-    border: 1px solid #dce1e6;
-    border-radius: 6px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    background-color: #f9f4ed;
+    border: 1px solid #eee7db;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(46, 43, 37, 0.16);
     overflow: hidden;
 }
 
 .skill-suggestion {
     padding: 10px 14px;
-    color: #444;
+    color: #474238;
     font-size: 14px;
     cursor: pointer;
 }
 
     .skill-suggestion:hover {
-        background-color: #f1f3f5;
+        background-color: #fff2eb;
+        color: #643312;
     }
 
 .selected-skills {
@@ -99,26 +101,27 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 14px;
-    background-color: #f8f9fa;
-    border: 1px solid #dce1e6;
-    border-radius: 7px;
+    padding: 13px 15px;
+    background: linear-gradient(168deg, #fffaf1 0%, #f9f4ed 100%);
+    border: 1px solid #eee7db;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(46, 43, 37, 0.08);
 }
 
 .selected-skill-name {
     flex: 1;
-    color: #303740;
+    color: #2e2b25;
     font-size: 14px;
     font-weight: 600;
 }
 
 .selected-skill-level {
-    padding: 5px 9px;
-    background-color: #eef1f4;
-    border: 1px solid #dce1e6;
-    border-radius: 5px;
-    color: #4d5965;
-    font-size: 12px;
+    padding: 5px 10px;
+    background-color: #e1eecc;
+    border: 1px solid #ccdbb2;
+    border-radius: 999px;
+    color: #3d472b;
+    font-size: 11px;
     font-weight: 600;
 }
 
@@ -128,13 +131,13 @@
     padding: 0;
     background: none;
     border: none;
-    color: #737b84;
+    color: #82796a;
     font-size: 20px;
     cursor: pointer;
 }
 
     .remove-skill:hover {
-        color: #303740;
+        color: #8c491a;
     }
 
 .resume-upload-box {
@@ -142,9 +145,9 @@
     align-items: center;
     gap: 18px;
     padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px dashed #cbd1d8;
-    border-radius: 8px;
+    background-color: #f9f4ed;
+    border: 1px dashed #c0b6a5;
+    border-radius: 16px;
 }
 
 .resume-upload-content {
@@ -154,14 +157,14 @@
 .resume-upload-label {
     display: block;
     margin-bottom: 5px;
-    color: #303740;
+    color: #2e2b25;
     font-size: 14px;
     font-weight: 600;
 }
 
 .resume-upload-content p {
     margin: 0 0 10px;
-    color: #888f98;
+    color: #82796a;
     font-size: 13px;
 }
 
@@ -176,8 +179,9 @@
     gap: 15px;
     padding: 15px 18px;
     margin-top: 15px;
-    border: 1px solid #dce1e6;
-    border-radius: 8px;
+    background-color: #fffaf1;
+    border: 1px solid #eee7db;
+    border-radius: 16px;
 }
 
 .current-resume-info {
@@ -187,23 +191,25 @@
 }
 
     .current-resume-info strong {
-        color: #303740;
+        color: #2e2b25;
         font-size: 14px;
     }
 
 .view-resume-button {
     padding: 9px 15px;
-    background-color: #ffffff;
-    border: 1px solid #dce1e6;
-    border-radius: 6px;
-    color: #4d5965;
+    background-color: transparent;
+    border: 1px solid rgba(32, 30, 29, 0.16);
+    border-radius: 999px;
+    color: #c67139;
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
+    transition: 0.2s;
 }
 
     .view-resume-button:hover {
-        background-color: #f1f3f5;
+        background-color: #fff2eb;
+        color: #8c491a;
     }
 
 .form-buttons {
@@ -211,33 +217,6 @@
     justify-content: flex-end;
     gap: 10px;
     padding-top: 25px;
-}
-
-@media (max-width: 768px) {
-    .profile-form-container {
-        max-width: none;
-    }
-
-    .skill-input-container {
-        flex-direction: column;
-    }
-
-    .skill-search-wrapper,
-    .skill-level,
-    .add-skill-button {
-        width: 100%;
-    }
-
-    .current-resume {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .view-resume-button {
-        width: 100%;
-        box-sizing: border-box;
-        text-align: center;
-    }
 }
 
 #qualifications {
@@ -249,9 +228,10 @@
 .qualification-item {
     position: relative;
     padding: 20px;
-    border: 1px solid #e1e5ea;
-    border-radius: 10px;
-    background: #fafbfc;
+    background: linear-gradient(168deg, #fffaf1 0%, #f9f4ed 100%);
+    border: 1px solid #eee7db;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(46, 43, 37, 0.08);
 }
 
 .qualification-fields {
@@ -267,9 +247,10 @@
 
 .qualification-item label {
     display: block;
-    margin-bottom: 7px;
-    font-size: 14px;
-    font-weight: 600;
+    margin-bottom: 6px;
+    color: #474238;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .qualification-year {
@@ -292,8 +273,34 @@
     margin-top: 16px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
+    .profile-form-container {
+        max-width: none;
+    }
 
+    .skill-input-container {
+        grid-template-columns: 1fr;
+    }
+
+    .skill-search-wrapper,
+    .skill-level,
+    .add-skill-button {
+        width: 100%;
+    }
+
+    .current-resume {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .view-resume-button {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
+
+@media (max-width: 900px) {
     .qualification-fields {
         grid-template-columns: 1fr;
         padding-right: 0;
