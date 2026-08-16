@@ -1,5 +1,4 @@
 ﻿using Amazon;
-using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 
@@ -8,99 +7,59 @@ namespace DDAC.Services
     public class S3Service
     {
         private readonly IConfiguration _configuration;
+        private readonly IAmazonS3 _s3Client;
+        private readonly string _bucketName;
 
         public S3Service(IConfiguration configuration)
         {
             _configuration = configuration;
+
+            var region = _configuration["AWS:region"];
+            _bucketName = _configuration["AWS:bucket_name"]
+                ?? throw new InvalidOperationException(
+                    "AWS bucket name is not configured.");
+
+            _s3Client = new AmazonS3Client(
+                RegionEndpoint.GetBySystemName(region)
+            );
         }
 
         public async Task<string> UploadResumeAsync(
             IFormFile resume,
             int userId)
         {
-            var accessKey =
-                _configuration["AWS:aws_access_key_id"];
-
-            var secretKey =
-                _configuration["AWS:aws_secret_access_key"];
-
-            var sessionToken =
-                _configuration["AWS:aws_session_token"];
-
-            var region =
-                _configuration["AWS:region"];
-
-            var bucketName =
-                _configuration["AWS:bucket_name"];
-
-            var credentials = new SessionAWSCredentials(
-                accessKey,
-                secretKey,
-                sessionToken
-            );
-
-            var s3Client = new AmazonS3Client(
-                credentials,
-                RegionEndpoint.GetBySystemName(region)
-            );
-
-            var extension =
-                Path.GetExtension(resume.FileName)
-                    .ToLowerInvariant();
+            var extension = Path
+                .GetExtension(resume.FileName)
+                .ToLowerInvariant();
 
             var fileName =
                 $"resumes/{userId}/{Guid.NewGuid()}{extension}";
 
             var uploadRequest = new PutObjectRequest
             {
-                BucketName = bucketName,
+                BucketName = _bucketName,
                 Key = fileName,
                 InputStream = resume.OpenReadStream(),
                 ContentType = resume.ContentType
             };
 
-            await s3Client.PutObjectAsync(uploadRequest);
+            await _s3Client.PutObjectAsync(uploadRequest);
 
             return fileName;
         }
 
-        public async Task<string> GetResumeUrlAsync(string s3Key)
+        public async Task<string> GetResumeUrlAsync(
+            string s3Key)
         {
-            var accessKey =
-                _configuration["AWS:aws_access_key_id"];
-
-            var secretKey =
-                _configuration["AWS:aws_secret_access_key"];
-
-            var sessionToken =
-                _configuration["AWS:aws_session_token"];
-
-            var region =
-                _configuration["AWS:region"];
-
-            var bucketName =
-                _configuration["AWS:bucket_name"];
-
-            var credentials = new SessionAWSCredentials(
-                accessKey,
-                secretKey,
-                sessionToken
-            );
-
-            var s3Client = new AmazonS3Client(
-                credentials,
-                RegionEndpoint.GetBySystemName(region)
-            );
-
             var request = new GetPreSignedUrlRequest
             {
-                BucketName = bucketName,
+                BucketName = _bucketName,
                 Key = s3Key,
                 Expires = DateTime.UtcNow.AddMinutes(10),
                 Verb = HttpVerb.GET
             };
 
-            return s3Client.GetPreSignedURL(request);
+            return _s3Client.GetPreSignedURL(request);
         }
     }
 }
