@@ -1,0 +1,223 @@
+﻿@model IEnumerable<DDAC.Models.Inquiry>
+
+@{
+    ViewData["Title"] = "My Inquiries";
+
+    var advisors = ViewBag.Advisors
+        as IEnumerable<DDAC.Models.CareerAdvisorProfile>;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        <div class="page-header">
+
+            <h1>My Inquiries</h1>
+
+            <p>
+                View your submitted inquiries and responses
+                from career advisors.
+            </p>
+
+        </div>
+
+        <form asp-controller="Inquiry"
+              asp-action="MyInquiries"
+              method="get"
+              class="search-bar">
+
+            <select name="status"
+                    class="form-select">
+
+                <option value="">
+                    All Inquiries
+                </option>
+
+                <option value="Open"
+                        selected="@(ViewBag.SelectedStatus == "Open")">
+                    Open
+                </option>
+
+                <option value="Resolved"
+                        selected="@(ViewBag.SelectedStatus == "Resolved")">
+                    Resolved
+                </option>
+
+            </select>
+
+            <button type="submit"
+                    class="primary-button">
+                Filter
+            </button>
+
+        </form>
+
+        <div class="action-area"
+             style="margin-bottom: 25px; padding-top: 0; border-top: none;">
+
+            <a asp-controller="Inquiry"
+               asp-action="CareerSupport"
+               class="primary-button">
+                Submit New Inquiry
+            </a>
+
+        </div>
+
+        @if (TempData["InquirySuccess"] != null)
+        {
+            <div class="alert-message success-message">
+
+                @TempData["InquirySuccess"]
+
+            </div>
+        }
+
+        <div class="content-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var inquiry in Model)
+                {
+                    var advisor = advisors?
+                        .FirstOrDefault(a =>
+                            a.AdvisorID == inquiry.AdvisorID);
+
+                    <div class="list-card">
+
+                        <div class="list-card-header">
+
+                            <div>
+
+                                <h2 class="list-card-title">
+                                    @inquiry.Subject
+                                </h2>
+
+                                <p class="list-card-subtitle">
+
+                                    @if (advisor?.User != null)
+                                    {
+                                        <span>
+                                            Advisor:
+                                            @advisor.User.FullName
+                                        </span>
+
+                                        @if (!string.IsNullOrWhiteSpace(advisor.Specialisation))
+                                        {
+                                            <span>
+                                                · @advisor.Specialisation
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Advisor unavailable
+                                        </span>
+                                    }
+
+                                </p>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(inquiry.Status))
+                            {
+                                <span class="tag tag-status">
+                                    @inquiry.Status
+                                </span>
+                            }
+
+                        </div>
+
+                        <div class="job-description">
+
+                            <span class="job-label">
+                                My Inquiry
+                            </span>
+
+                            <p class="description-text">
+                                @inquiry.Message
+                            </p>
+
+                        </div>
+
+                        <div class="job-description">
+
+                            <span class="job-label">
+                                Advisor Response
+                            </span>
+
+                            @if (!string.IsNullOrWhiteSpace(inquiry.Response))
+                            {
+                                <p class="description-text">
+                                    @inquiry.Response
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="no-information">
+                                    No response yet.
+                                </p>
+                            }
+
+                        </div>
+
+                        <div class="job-card-details">
+
+                            <span class="detail-item">
+                                <strong>Submitted:</strong>
+                                @inquiry.CreatedDate.ToString("dd MMM yyyy")
+                            </span>
+
+                            @if (inquiry.ResolvedDate.HasValue)
+                            {
+                                <span class="detail-item">
+                                    <strong>Responded:</strong>
+                                    @inquiry.ResolvedDate.Value.ToString("dd MMM yyyy")
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h2>No Inquiries Yet</h2>
+
+                    <p>
+                        You haven't submitted any inquiries
+                        to career advisors yet.
+                    </p>
+
+                    <br />
+
+                    <a asp-controller="Inquiry"
+                       asp-action="CareerSupport"
+                       class="primary-button">
+                        Submit an Inquiry
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>

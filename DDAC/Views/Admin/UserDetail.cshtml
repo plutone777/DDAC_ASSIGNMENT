@@ -1,0 +1,354 @@
+@model DDAC.Models.Admin.UserDetailViewModel
+@using DDAC.Models.Admin
+
+@{
+    ViewData["Title"] = Model.User.FullName;
+    Layout = "_AdminLayout";
+    var statusTag = Model.User.Status == "Active" ? "tag-accent-2" : "tag-neutral";
+    var from = Context.Request.Query["from"].ToString();
+    var cameFromVerification = from == "verification";
+    var backAction = cameFromVerification ? "EmployerVerification" : "UserAccounts";
+    var backLabel = cameFromVerification ? "\u2190 Back to Employer Verification" : "\u2190 Back to User Accounts";
+}
+
+<div class="admin-panel">
+
+    <div class="admin-toolbar">
+        <a class="btn btn-secondary" asp-controller="Admin" asp-action="@backAction">@backLabel</a>
+        <a class="btn btn-primary" style="margin-left:auto" asp-controller="Admin" asp-action="GenerateUserReport" asp-route-id="@Model.User.UserID">Generate Report</a>
+    </div>
+
+    <div class="card elev-sm">
+        <span class="card-kicker">@Model.User.Role</span>
+        <h2 style="margin-bottom:4px">@Model.User.FullName</h2>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:var(--space-3)">
+            <span class="tag @statusTag">@Model.User.Status</span>
+            <span style="font-size:12.5px;color:var(--color-neutral-700)">Joined @Model.User.CreatedDate.ToString("d MMM yyyy")</span>
+        </div>
+
+        <div class="admin-stats" style="margin-bottom:0">
+            <div>
+                <div class="admin-drawer-field-label">Email</div>
+                <div>@Model.User.Email</div>
+            </div>
+            <div>
+                <div class="admin-drawer-field-label">Phone</div>
+                <div>@(string.IsNullOrEmpty(Model.User.PhoneNumber) ? "-" : Model.User.PhoneNumber)</div>
+            </div>
+            <div>
+                <div class="admin-drawer-field-label">User ID</div>
+                <div>@Model.User.UserID</div>
+            </div>
+        </div>
+
+        @if (Model.User.Role != "Admin")
+        {
+            <div style="margin-top:var(--space-4)">
+                <form asp-controller="Admin" asp-action="ToggleUserStatus" method="post">
+                    <input type="hidden" name="id" value="@Model.User.UserID" />
+                    <button type="submit" class="btn btn-secondary">@(Model.User.Status == "Active" ? "Suspend account" : "Reactivate account")</button>
+                </form>
+            </div>
+        }
+    </div>
+
+    @if (Model.User.Role == "JobSeeker")
+    {
+        <div class="card elev-sm">
+            <h3>Job Seeker Profile</h3>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Career Goal</div>
+                <div class="admin-drawer-field-value">@(Model.JobSeekerProfile?.CareerGoal ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Bio</div>
+                <div class="admin-drawer-field-value">@(Model.JobSeekerProfile?.Bio ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Preferred Location</div>
+                <div class="admin-drawer-field-value">@(Model.JobSeekerProfile?.PreferredLocation ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Resume</div>
+                <div class="admin-drawer-field-value">
+                    @if (!string.IsNullOrEmpty(Model.JobSeekerProfile?.ResumeURL))
+                    {
+                        <a href="@Model.JobSeekerProfile.ResumeURL" target="_blank">View resume</a>
+                    }
+                    else
+                    {
+                        <text>-</text>
+                    }
+                </div>
+            </div>
+            <div class="admin-drawer-field" style="border-bottom:none">
+                <div class="admin-drawer-field-label">Accommodation Needs</div>
+                <div class="admin-drawer-field-value">@(Model.JobSeekerProfile?.AccommodationNeeds ?? "Not specified")</div>
+            </div>
+        </div>
+
+        <div class="card elev-sm">
+            <h3>Skills</h3>
+            @if (!Model.Skills.Any())
+            {
+                <p style="opacity:.7">No skills listed.</p>
+            }
+            else
+            {
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <span class="tag tag-outline">@skill</span>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="card elev-sm">
+            <h3>Qualifications</h3>
+            @if (!Model.Qualifications.Any())
+            {
+                <p style="opacity:.7">No qualifications listed.</p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead><tr><th>Qualification</th><th>Institution</th><th>Completed</th></tr></thead>
+                    <tbody>
+                        @foreach (var q in Model.Qualifications)
+                        {
+                            <tr><td>@q.QualificationName</td><td>@q.Institution</td><td>@q.CompletionYear</td></tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+
+        <div class="card elev-sm" data-filter-scope>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-2)">
+                <h3 style="margin:0">Job Applications (<span data-filter-count>@Model.Applications.Count</span>)</h3>
+                @if (Model.Applications.Any())
+                {
+                    <input class="input" style="max-width:220px" type="text" placeholder="Search applications" data-filter-input />
+                }
+            </div>
+            @if (!Model.Applications.Any())
+            {
+                <p style="opacity:.7">No applications submitted yet.</p>
+            }
+            else
+            {
+                <table class="table" data-filter-table>
+                    <thead><tr><th>Job Title</th><th>Applied</th><th>Status</th></tr></thead>
+                    <tbody>
+                        @foreach (var a in Model.Applications)
+                        {
+                            <tr style="cursor:pointer"
+                                data-search="@(a.JobTitle + " " + a.Status)"
+                                data-drawer-row
+                                data-drawer-title="@a.JobTitle"
+                                data-drawer-subtitle="Job application"
+                                data-drawer-fields="Job Title:jobtitle,Applied:applied,Status:status,Resume:resume,Cover Letter:coverletter"
+                                data-jobtitle="@a.JobTitle"
+                                data-applied="@a.ApplicationDate.ToString("d MMM yyyy")"
+                                data-status="@a.Status"
+                                data-resume="@a.ResumeURL"
+                                data-coverletter="@a.CoverLetter">
+                                <td>@a.JobTitle</td>
+                                <td>@a.ApplicationDate.ToString("d MMM yyyy")</td>
+                                <td><span class="tag tag-outline">@a.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+            }
+        </div>
+    }
+
+    @if (Model.User.Role == "Employer")
+    {
+        <div class="card elev-sm">
+            <h3>Company Profile</h3>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Company Name</div>
+                <div class="admin-drawer-field-value">@(Model.EmployerProfile?.CompanyName ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Industry</div>
+                <div class="admin-drawer-field-value">@(Model.EmployerProfile?.Industry ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Description</div>
+                <div class="admin-drawer-field-value">@(Model.EmployerProfile?.CompanyDescription ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Address</div>
+                <div class="admin-drawer-field-value">@(Model.EmployerProfile?.Address ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field" style="border-bottom:none">
+                <div class="admin-drawer-field-label">Verification Status</div>
+                <div class="admin-drawer-field-value">@(Model.EmployerProfile?.VerificationStatus ?? "-")</div>
+            </div>
+        </div>
+
+        @if (!cameFromVerification)
+        {
+            <div class="card elev-sm" data-filter-scope>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-2)">
+                    <h3 style="margin:0">Job Postings (<span data-filter-count>@Model.JobPostings.Count</span>)</h3>
+                    @if (Model.JobPostings.Any())
+                    {
+                        <input class="input" style="max-width:220px" type="text" placeholder="Search postings" data-filter-input />
+                    }
+                </div>
+                @if (!Model.JobPostings.Any())
+                {
+                    <p style="opacity:.7">No job postings yet.</p>
+                }
+                else
+                {
+                    <table class="table" data-filter-table>
+                        <thead><tr><th>Job Title</th><th>Location</th><th>Posted</th><th>Status</th></tr></thead>
+                        <tbody>
+                            @foreach (var j in Model.JobPostings)
+                            {
+                                <tr style="cursor:pointer"
+                                    data-search="@(j.JobTitle + " " + j.Location + " " + j.Status)"
+                                    data-drawer-row
+                                    data-drawer-title="@j.JobTitle"
+                                    data-drawer-subtitle="Job posting"
+                                    data-drawer-fields="Job Title:jobtitle,Location:location,Employment Type:employmenttype,Salary:salary,Posted:posted,Closing:closing,Status:status,Description:description,Accessibility Features:accessibility,Accommodations Available:accommodations"
+                                    data-jobtitle="@j.JobTitle"
+                                    data-location="@j.Location"
+                                    data-employmenttype="@j.EmploymentType"
+                                    data-salary="@j.Salary.ToString("C0")"
+                                    data-posted="@j.PostedDate.ToString("d MMM yyyy")"
+                                    data-closing="@j.ClosingDate.ToString("d MMM yyyy")"
+                                    data-status="@j.Status"
+                                    data-description="@j.Description"
+                                    data-accessibility="@j.AccessibilityFeatures"
+                                    data-accommodations="@j.AccommodationsAvailable"
+                                    data-drawer-delete-action="@Url.Action("DeleteJobPosting", "Admin")"
+                                    data-drawer-delete-id="@j.JobID"
+                                    data-drawer-delete-label="Remove posting"
+                                    data-drawer-delete-confirm="Remove this job posting? This cannot be undone.">
+                                    <td>@j.JobTitle</td>
+                                    <td>@j.Location</td>
+                                    <td>@j.PostedDate.ToString("d MMM yyyy")</td>
+                                    <td><span class="tag tag-outline">@j.Status</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+                }
+            </div>
+        }
+    }
+
+    @if (Model.User.Role == "CareerAdvisor")
+    {
+        <div class="card elev-sm">
+            <h3>Advisor Profile</h3>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Specialisation</div>
+                <div class="admin-drawer-field-value">@(Model.CareerAdvisorProfile?.Specialisation ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Qualification</div>
+                <div class="admin-drawer-field-value">@(Model.CareerAdvisorProfile?.Qualification ?? "-")</div>
+            </div>
+            <div class="admin-drawer-field">
+                <div class="admin-drawer-field-label">Experience</div>
+                <div class="admin-drawer-field-value">@(Model.CareerAdvisorProfile?.ExperienceYears.ToString() ?? "-") years</div>
+            </div>
+            <div class="admin-drawer-field" style="border-bottom:none">
+                <div class="admin-drawer-field-label">Bio</div>
+                <div class="admin-drawer-field-value">@(Model.CareerAdvisorProfile?.Bio ?? "-")</div>
+            </div>
+        </div>
+
+        <div class="card elev-sm" data-filter-scope>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-2)">
+                <h3 style="margin:0">Published Resources (<span data-filter-count>@Model.PublishedResources.Count</span>)</h3>
+                @if (Model.PublishedResources.Any())
+                {
+                    <input class="input" style="max-width:220px" type="text" placeholder="Search resources" data-filter-input />
+                }
+            </div>
+            @if (!Model.PublishedResources.Any())
+            {
+                <p style="opacity:.7">No resources published yet.</p>
+            }
+            else
+            {
+                <table class="table" data-filter-table>
+                    <thead><tr><th>Title</th><th>Category</th><th>Published</th><th>Status</th></tr></thead>
+                    <tbody>
+                        @foreach (var r in Model.PublishedResources)
+                        {
+                            <tr style="cursor:pointer"
+                                data-search="@(r.Title + " " + r.Category + " " + r.Status)"
+                                data-drawer-row
+                                data-drawer-title="@r.Title"
+                                data-drawer-subtitle="Educational resource"
+                                data-drawer-fields="Title:title,Category:category,Content URL:contenturl,Published:published,Status:status,Description:description"
+                                data-title="@r.Title"
+                                data-category="@r.Category"
+                                data-contenturl="@r.ContentURL"
+                                data-published="@r.PublishedDate.ToString("d MMM yyyy")"
+                                data-status="@r.Status"
+                                data-description="@r.Description"
+                                data-drawer-delete-action="@Url.Action("DeleteResource", "Admin")"
+                                data-drawer-delete-id="@r.ResourceID"
+                                data-drawer-delete-label="Remove resource"
+                                data-drawer-delete-confirm="Remove this resource? This cannot be undone.">
+                                <td>@r.Title</td>
+                                <td>@r.Category</td>
+                                <td>@r.PublishedDate.ToString("d MMM yyyy")</td>
+                                <td><span class="tag tag-outline">@r.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+            }
+        </div>
+    }
+
+    @if (Model.User.Role == "Admin")
+    {
+        <div class="card elev-sm" data-filter-scope>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;margin-bottom:var(--space-2)">
+                <h3 style="margin:0">Announcements Posted (<span data-filter-count>@Model.Announcements.Count</span>)</h3>
+                @if (Model.Announcements.Any())
+                {
+                    <input class="input" style="max-width:220px" type="text" placeholder="Search announcements" data-filter-input />
+                }
+            </div>
+            @if (!Model.Announcements.Any())
+            {
+                <p style="opacity:.7">No announcements posted yet.</p>
+            }
+            else
+            {
+                <table class="table" data-filter-table>
+                    <thead><tr><th>Title</th><th>Published</th><th>Status</th></tr></thead>
+                    <tbody>
+                        @foreach (var a in Model.Announcements)
+                        {
+                            <tr data-search="@(a.Title + " " + a.Status)">
+                                <td>@a.Title</td>
+                                <td>@a.PublishedDate.ToString("d MMM yyyy")</td>
+                                <td><span class="tag tag-outline">@a.Status</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+            }
+        </div>
+    }
+
+</div>

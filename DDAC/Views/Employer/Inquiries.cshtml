@@ -1,0 +1,13 @@
+@using System.Collections.Generic
+@model IEnumerable<Inquiry>
+@{ ViewData["Title"] = "Advisor Inquiries"; var advisors = ViewBag.AdvisorsById as Dictionary<int, User> ?? new(); }
+@section Styles { <link rel="stylesheet" href="~/css/Employer/employer.css" asp-append-version="true" /> }
+
+<div class="employer-shell"><partial name="~/Views/Employer/_EmployerSidebar.cshtml" /><section class="employer-content">
+    @if (TempData["Success"] is string success) { <div class="alert alert-success">@success</div> }
+    <div class="employer-page-heading"><div><span class="employer-eyebrow">Expert support</span><h1>Advisor inquiries</h1><p>Ask career advisors about inclusive hiring and workplace accommodations.</p></div><a class="btn btn-primary" asp-action="CreateInquiry">New inquiry</a></div>
+    <div class="employer-panel p-0 overflow-hidden">
+    @if (!Model.Any()) { <div class="employer-empty"><h2>No inquiries yet</h2><p>Start a conversation with a career advisor when you need guidance.</p></div> }
+    else { <div class="table-responsive"><table class="table align-middle employer-table mb-0"><thead><tr><th>Subject</th><th>Advisor</th><th>Created</th><th>Status</th><th></th></tr></thead><tbody>@foreach (var inquiry in Model) { advisors.TryGetValue(inquiry.AdvisorID, out var advisor); <tr><td><strong>@inquiry.Subject</strong></td><td>@(advisor?.FullName ?? "Career advisor")</td><td>@inquiry.CreatedDate.ToString("dd MMM yyyy")</td><td><span class="status-pill">@inquiry.Status</span></td><td><a asp-action="InquiryDetails" asp-route-id="@inquiry.InquiryID">Open</a></td></tr> }</tbody></table></div> }
+    </div>
+</section></div>

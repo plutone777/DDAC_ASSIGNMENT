@@ -1,0 +1,247 @@
+﻿@model IEnumerable<DDAC.Models.CareerGuidance>
+
+@{
+    ViewData["Title"] = "My Guidance Requests";
+
+    var advisors = ViewBag.Advisors
+        as IEnumerable<DDAC.Models.CareerAdvisorProfile>;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        <div class="page-header">
+
+            <h1>My Guidance Requests</h1>
+
+            <p>
+                View your submitted career guidance requests
+                and track their progress.
+            </p>
+
+        </div>
+
+        <form asp-controller="Inquiry"
+              asp-action="MyRequests"
+              method="get"
+              class="search-bar">
+
+            <select name="status"
+                    class="form-select">
+
+                <option value="">
+                    All Requests
+                </option>
+
+                <option value="Requested"
+                        selected="@(ViewBag.SelectedStatus == "Requested")">
+                    Requested
+                </option>
+
+                <option value="In Progress"
+                        selected="@(ViewBag.SelectedStatus == "In Progress")">
+                    In Progress
+                </option>
+
+                <option value="Completed"
+                        selected="@(ViewBag.SelectedStatus == "Completed")">
+                    Completed
+                </option>
+
+            </select>
+
+            <button type="submit"
+                    class="primary-button">
+                Filter
+            </button>
+
+        </form>
+
+        <div class="action-area"
+             style="margin-bottom: 25px; padding-top: 0; border-top: none;">
+
+            <a asp-controller="Inquiry"
+               asp-action="CareerSupport"
+               class="primary-button">
+                Request Career Guidance
+            </a>
+
+        </div>
+
+        @if (TempData["GuidanceSuccess"] != null)
+        {
+            <div class="alert-message success-message">
+                @TempData["GuidanceSuccess"]
+            </div>
+        }
+
+        <div class="content-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var request in Model)
+                {
+                    var advisor = advisors?
+                        .FirstOrDefault(a =>
+                            a.AdvisorID == request.AdvisorID);
+
+                    <div class="list-card">
+
+                        <div class="list-card-header">
+
+                            <div>
+
+                                <div class="support-title-row">
+
+                                    <h2 class="list-card-title">
+                                        @request.Subject
+                                    </h2>
+
+                                </div>
+
+
+                                @if (advisor?.User != null)
+                                {
+                                    <p class="list-card-subtitle">
+
+                                        Advisor:
+                                        <strong>
+                                            @advisor.User.FullName
+                                        </strong>
+
+                                        @if (!string.IsNullOrWhiteSpace(advisor.Specialisation))
+                                        {
+                                            <span>
+                                                · @advisor.Specialisation
+                                            </span>
+                                        }
+
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="list-card-subtitle">
+                                        Advisor unavailable
+                                    </p>
+                                }
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(request.Status))
+                            {
+                                <span class="tag tag-status">
+                                    @request.Status
+                                </span>
+                            }
+
+                        </div>
+
+                        <div class="job-accessibility-section">
+
+                            <span class="job-label">
+                                Guidance Type
+                            </span>
+
+                            <div class="tag-list">
+
+                                <span class="tag">
+                                    @request.GuidanceType
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="job-description">
+
+                            <span class="job-label">
+                                My Request
+                            </span>
+
+                            <p class="description-text">
+                                @request.GuidanceNotes
+                            </p>
+
+                        </div>
+
+                        <div class="job-description">
+
+                            <span class="job-label">
+                                Progress
+                            </span>
+
+                            @if (request.Status == "Completed")
+                            {
+                                <p class="description-text">
+                                    Your career guidance request has
+                                    been reviewed by a career advisor.
+                                </p>
+                            }
+                            else if (request.Status == "In Progress")
+                            {
+                                <p class="description-text">
+                                    A career advisor is currently
+                                    reviewing your request.
+                                </p>
+                            }
+                            else
+                            {
+                                <p class="no-information">
+                                    Your request is waiting to be reviewed.
+                                </p>
+                            }
+
+                        </div>
+
+                        <div class="job-card-details">
+
+                            <span class="detail-item">
+                                <strong>Submitted:</strong>
+                                @request.GuidanceDate.ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h2>No Guidance Requests Yet</h2>
+
+                    <p>
+                        You haven't submitted any career guidance
+                        requests yet.
+                    </p>
+
+                    <br />
+
+                    <a asp-controller="Inquiry"
+                       asp-action="CareerSupport"
+                       class="primary-button">
+                        Request Career Guidance
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>

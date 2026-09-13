@@ -1,0 +1,52 @@
+﻿@model List<DDAC.Models.TrainingProgram>
+@{
+    ViewData["Title"] = "Training programs";
+}
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>Training programs</h1>
+            <p>Courses and certifications available to Job seekers</p>
+        </div>
+
+        <div class="search-bar">
+            <a class="primary-button" asp-action="CreateTraining">Add new program</a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h2>No programs yet</h2>
+                <p>Add a course or certification Job seekers can apply for</p>
+            </div>
+        }
+        else
+        {
+            <div class="content-list">
+                @foreach (var item in Model)
+                {
+                    <div class="list-card list-card-hover">
+                        <div class="list-card-header">
+                            <div>
+                                <h3 class="list-card-title">@item.Title</h3>
+                                <p class="list-card-subtitle">@item.Provider</p>
+                            </div>
+                            <span class="tag tag-status">@item.Status</span>
+                        </div>
+
+                        <p class="description-text">@item.Description</p>
+
+                        <div class="action-area">
+                            <a class="secondary-button" asp-action="EditTraining" asp-route-id="@item.TrainingID">Edit</a>
+                            <a class="secondary-button" asp-action="DeleteTraining" asp-route-id="@item.TrainingID">Delete</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </main>
+</div>

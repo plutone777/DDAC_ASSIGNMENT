@@ -1,0 +1,66 @@
+@model List<CareerResource>
+
+@{
+    ViewData["Title"] = "Educational Resources";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-panel" data-filter-scope>
+    <div class="admin-toolbar">
+        <input class="input" type="text" placeholder="Search title or category" data-filter-input />
+        <div class="admin-tabs">
+            <button type="button" class="admin-tab active" data-filter-tab data-filter-group="status" data-filter-value="All">All</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Published">Published</button>
+            <button type="button" class="admin-tab" data-filter-tab data-filter-group="status" data-filter-value="Draft">Draft</button>
+        </div>
+        <span style="margin-left:auto;font-size:13px;color:var(--color-neutral-700)"><span data-filter-count>@Model.Count</span> resources</span>
+    </div>
+
+    <div class="card elev-sm">
+        @if (!Model.Any())
+        {
+            <div class="admin-empty"><p>No educational resources found.</p></div>
+        }
+        else
+        {
+            <table class="table" data-filter-table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Published</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var resource in Model)
+                    {
+                        var tagClass = resource.Status == "Published" ? "tag-accent-2" : "tag-outline";
+                        <tr style="cursor:pointer"
+                            data-search="@(resource.Title + " " + resource.Category)" data-status="@resource.Status"
+                            data-drawer-row
+                            data-drawer-title="@resource.Title"
+                            data-drawer-subtitle="Educational resource"
+                            data-drawer-fields="Title:title,Category:category,Content URL:contenturl,Published:published,Status:status,Description:description"
+                            data-title="@resource.Title"
+                            data-category="@resource.Category"
+                            data-contenturl="@resource.ContentURL"
+                            data-published="@resource.PublishedDate.ToString("d MMM yyyy")"
+                            data-status="@resource.Status"
+                            data-description="@resource.Description"
+                            data-drawer-delete-action="@Url.Action("DeleteResource", "Admin")"
+                            data-drawer-delete-id="@resource.ResourceID"
+                            data-drawer-delete-label="Remove resource"
+                            data-drawer-delete-confirm="Remove this resource? This cannot be undone.">
+                            <td><strong>@resource.Title</strong></td>
+                            <td>@resource.Category</td>
+                            <td>@resource.PublishedDate.ToString("d MMM yyyy")</td>
+                            <td><span class="tag @tagClass">@resource.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="admin-empty" data-filter-empty style="display:none"><p>Nothing matches that.</p></div>
+        }
+    </div>
+</div>

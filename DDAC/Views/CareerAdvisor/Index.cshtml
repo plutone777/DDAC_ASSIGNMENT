@@ -1,0 +1,64 @@
+﻿@model List<DDAC.Models.CareerResource>
+@{
+    ViewData["Title"] = "My career resources";
+    var announcements = ViewBag.Announcements as List<DDAC.Models.Announcement>;
+}
+
+<link rel="stylesheet" href="~/css/CareerAdvisor/CareerAdvisor.css"/>
+
+<div class="advisor-page">
+    <partial name="_CareerAdvisorNav"/>
+
+    <main class="advisor-main">
+        <div class="page-header">
+            <h1>My career resources</h1>
+            <p>Guides and materials you have published for Job seekers</p>
+        </div>
+
+        @if (announcements != null && announcements.Any())
+        {
+            @foreach (var note in announcements)
+            {
+                <div class="alert-message success-message">
+                    <strong>@note.Title</strong> — @note.Content
+                </div>
+            }
+        }
+
+        <div class="search-bar">
+            <a class="primary-button" asp-action="Create">Add new resource</a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h2>No resources yet</h2>
+                <p>Publish your first guide to help Job seekers get started</p>
+            </div>
+        }
+        else
+        {
+            <div class="content-list">
+                @foreach (var item in Model)
+                {
+                    <div class="list-card list-card-hover">
+                        <div class="list-card-header">
+                            <div>
+                                <h3 class="list-card-title">@item.Title</h3>
+                                <p class="list-card-subtitle">@item.PublishedDate.ToString("dd MMM yyyy")</p>
+                            </div>
+                            <span class="tag tag-status">@item.Category</span>
+                        </div>
+
+                        <p class="description-text">@item.Description</p>
+
+                        <div class="action-area">
+                            <a class="secondary-button" asp-action="Edit" asp-route-id="@item.ResourceID">Edit</a>
+                            <a class="secondary-button" asp-action="Delete" asp-route-id="@item.ResourceID">Delete</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </main>
+</div>
