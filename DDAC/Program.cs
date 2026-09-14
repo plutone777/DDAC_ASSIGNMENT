@@ -14,6 +14,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
 builder.Services.AddScoped<S3Service>();
+builder.Services.AddScoped<JobApplicationService>();
 
 var app = builder.Build();
 

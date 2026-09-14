@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="DDAC.JS.JobApplicationLambda/DDAC.JS.JobApplicationLambda.csproj" />
   <Project Path="DDAC/DDAC.csproj" />
 </Solution>

@@ -1,0 +1,46 @@
+[33m28913ed[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mMerge-All[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33m5d20e77[m[33m ([m[1;31morigin/Merge-All[m[33m)[m HEAD@{1}: commit: Final
+[33m07aec17[m HEAD@{2}: commit: Done
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{3}: checkout: moving from Merge-Mayan-Shadha-Samara to Merge-All
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{4}: checkout: moving from Merge-All to Merge-Mayan-Shadha-Samara
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{5}: checkout: moving from Mayan to Merge-All
+[33m3baec01[m[33m ([m[1;31morigin/Mayan[m[33m, [m[1;32mMayan[m[33m)[m HEAD@{6}: checkout: moving from Merge-All to Mayan
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{7}: checkout: moving from Merge-Mayan-Shadha-Samara to Merge-All
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{8}: checkout: moving from Merge-All to Merge-Mayan-Shadha-Samara
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{9}: reset: moving to HEAD
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{10}: checkout: moving from Merge-Mayan-Shadha-Samara to Merge-All
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{11}: checkout: moving from Final to Merge-Mayan-Shadha-Samara
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{12}: checkout: moving from Merge-Mayan-Shadha-Samara to Final
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{13}: checkout: moving from Final to Merge-Mayan-Shadha-Samara
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{14}: checkout: moving from feature/employer-module to Final
+[33mcf8e61e[m[33m ([m[1;31morigin/feature/employer-module[m[33m, [m[1;32mfeature/employer-module[m[33m)[m HEAD@{15}: checkout: moving from Merge-Mayan-Shadha-Samara to feature/employer-module
+[33m92b2087[m[33m ([m[1;31morigin/Merge-Mayan-Shadha-Samara[m[33m, [m[1;32mMerge-Mayan-Shadha-Samara[m[33m)[m HEAD@{16}: commit: All OK
+[33mc988dd5[m[33m ([m[1;31morigin/Merge-Mayan-Shadha[m[33m, [m[1;32mMerge-Mayan-Shadha[m[33m)[m HEAD@{17}: checkout: moving from Samara to Merge-Mayan-Shadha-Samara
+[33m1256082[m HEAD@{18}: checkout: moving from Merge-Mayan-Shadha-Samara to Samara
+[33mc988dd5[m[33m ([m[1;31morigin/Merge-Mayan-Shadha[m[33m, [m[1;32mMerge-Mayan-Shadha[m[33m)[m HEAD@{19}: checkout: moving from Merge-Mayan-Shadha to Merge-Mayan-Shadha-Samara
+[33mc988dd5[m[33m ([m[1;31morigin/Merge-Mayan-Shadha[m[33m, [m[1;32mMerge-Mayan-Shadha[m[33m)[m HEAD@{20}: commit: Changed JobSeeker css
+[33mbe610f5[m HEAD@{21}: commit: All OK
+[33m3baec01[m[33m ([m[1;31morigin/Mayan[m[33m, [m[1;32mMayan[m[33m)[m HEAD@{22}: checkout: moving from shadha-2 to Merge-Mayan-Shadha
+[33m4c7ba8a[m[33m ([m[1;31morigin/shadha-2[m[33m, [m[1;32mshadha-2[m[33m)[m HEAD@{23}: checkout: moving from Merge-Mayan-Shadha to shadha-2
+[33m3baec01[m[33m ([m[1;31morigin/Mayan[m[33m, [m[1;32mMayan[m[33m)[m HEAD@{24}: checkout: moving from shadha-2 to Merge-Mayan-Shadha
+[33m4c7ba8a[m[33m ([m[1;31morigin/shadha-2[m[33m, [m[1;32mshadha-2[m[33m)[m HEAD@{25}: checkout: moving from Merge-Mayan-Shadha to shadha-2
+[33m3baec01[m[33m ([m[1;31morigin/Mayan[m[33m, [m[1;32mMayan[m[33m)[m HEAD@{26}: checkout: moving from Mayan to Merge-Mayan-Shadha
+[33m3baec01[m[33m ([m[1;31morigin/Mayan[m[33m, [m[1;32mMayan[m[33m)[m HEAD@{27}: commit: Done
+[33m5f3c999[m HEAD@{28}: commit: Finished 4/5 functions
+[33m3181c02[m HEAD@{29}: pull origin main: Fast-forward
+[33m911525f[m HEAD@{30}: checkout: moving from main to Mayan
+[33m3181c02[m HEAD@{31}: checkout: moving from Mayan to main
+[33m911525f[m HEAD@{32}: reset: moving to HEAD
+[33m911525f[m HEAD@{33}: checkout: moving from main to Mayan
+[33m3181c02[m HEAD@{34}: commit: Added folders for each role in wwwroot/css
+[33m911525f[m HEAD@{35}: checkout: moving from Mayan to main
+[33m911525f[m HEAD@{36}: checkout: moving from main to Mayan
+[33m911525f[m HEAD@{37}: checkout: moving from Mayan to main
+[33m911525f[m HEAD@{38}: checkout: moving from main to Mayan
+[33m911525f[m HEAD@{39}: commit: Added simple register and login
+[33mb8aee4a[m HEAD@{40}: commit: Small update to user model
+[33mb57fd99[m HEAD@{41}: commit: Added all models + tables
+[33m890459a[m HEAD@{42}: commit: Added folders for all roles.
+[33m6125c37[m HEAD@{43}: Branch: renamed refs/heads/master to refs/heads/main
+[33m6125c37[m HEAD@{45}: commit: Add project files.
+[33m81153ca[m HEAD@{46}: commit (initial): Add .gitattributes and .gitignore.
