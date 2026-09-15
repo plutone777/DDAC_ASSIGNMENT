@@ -12,5 +12,14 @@
   "function-runtime": "dotnet10",
   "function-memory-size": 512,
   "function-timeout": 30,
-  "function-handler": "DDAC.JS.JobApplicationProcessorLambda::DDAC.JS.JobApplicationProcessorLambda.Function::FunctionHandler"
+  "function-handler": "DDAC.JS.JobApplicationProcessorLambda::DDAC.JS.JobApplicationProcessorLambda.Function::FunctionHandler",
+  "framework": "net10.0",
+  "function-name": "ddac-js-jobapplicationprocess",
+  "package-type": "Zip",
+  "function-role": "arn:aws:iam::221181440679:role/LabRole",
+  "function-subnets": "",
+  "function-security-groups": "",
+  "tracing-mode": "Active",
+  "environment-variables": "",
+  "image-tag": ""
 }
