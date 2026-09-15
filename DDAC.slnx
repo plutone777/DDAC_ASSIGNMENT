@@ -1,4 +1,7 @@
 <Solution>
+  <Project Path="DDAC.JS.GuidanceLambda/DDAC.JS.GuidanceLambda.csproj" />
+  <Project Path="DDAC.JS.InquiryLambda/DDAC.JS.InquiryLambda.csproj" />
   <Project Path="DDAC.JS.JobApplicationLambda/DDAC.JS.JobApplicationLambda.csproj" />
+  <Project Path="DDAC.JS.JobApplicationProcessorLambda/DDAC.JS.JobApplicationProcessorLambda.csproj" />
   <Project Path="DDAC/DDAC.csproj" />
 </Solution>

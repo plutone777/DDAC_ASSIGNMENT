@@ -1,21 +1,20 @@
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using DDAC.Data;
-using DDAC.JS.JobApplicationLambda.Models;
-using DDAC.Services;
+using DDAC.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+[assembly: LambdaSerializer(
+    typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer)
+)]
 
-namespace DDAC.JS.JobApplicationLambda;
+namespace DDAC.JS.InquiryLambda;
 
 public class Function
 {
     private readonly ApplicationDbContext _context;
-    private readonly JobApplicationService _jobApplicationService;
 
     public Function()
     {
@@ -31,17 +30,17 @@ public class Function
                 .Options;
 
         _context = new ApplicationDbContext(options);
-        _jobApplicationService = new JobApplicationService(_context);
     }
 
     public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
         APIGatewayHttpApiV2ProxyRequest request,
         ILambdaContext context)
     {
-        var applicationRequest =
-            JsonSerializer.Deserialize<JobApplicationRequest>(request.Body);
+        var inquiry =
+            JsonSerializer.Deserialize<Inquiry>(
+                request.Body);
 
-        if (applicationRequest == null)
+        if (inquiry == null)
         {
             return new APIGatewayHttpApiV2ProxyResponse
             {
@@ -50,24 +49,21 @@ public class Function
             };
         }
 
-        var result =
-            await _jobApplicationService.SubmitApplicationAsync(
-                applicationRequest.JobSeekerID,
-                applicationRequest.JobID,
-                applicationRequest.CoverLetter);
-
-        if (!result.Success)
+        if (inquiry.UserID <= 0)
         {
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
-                Body = JsonSerializer.Serialize(new
-                {
-                    success = false,
-                    message = result.Message
-                })
+                Body = "{\"message\":\"Invalid UserID.\"}"
             };
         }
+
+        inquiry.Status = "Open";
+        inquiry.CreatedDate = DateTime.Now;
+
+        _context.Inquiries.Add(inquiry);
+
+        await _context.SaveChangesAsync();
 
         return new APIGatewayHttpApiV2ProxyResponse
         {
@@ -75,8 +71,8 @@ public class Function
             Body = JsonSerializer.Serialize(new
             {
                 success = true,
-                message = result.Message,
-                applicationId = result.Application!.ApplicationID
+                message = "Your inquiry has been submitted successfully.",
+                inquiryID = inquiry.InquiryID
             })
         };
     }

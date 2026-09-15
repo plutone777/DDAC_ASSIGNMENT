@@ -12,15 +12,14 @@
   "function-runtime": "dotnet10",
   "function-memory-size": 512,
   "function-timeout": 30,
-  "function-handler": "DDAC.JS.JobApplicationLambda::DDAC.JS.JobApplicationLambda.Function::FunctionHandler",
+  "function-handler": "DDAC.JS.InquiryLambda::DDAC.JS.InquiryLambda.Function::FunctionHandler",
   "framework": "net10.0",
-  "function-name": "ddac-js-jobapplication",
+  "function-name": "ddac-js-inquiry",
   "package-type": "Zip",
   "function-role": "arn:aws:iam::221181440679:role/LabRole",
-  "function-subnets": "subnet-09c4aa79bea2c944b,subnet-00fa125ea6873c580",
-  "function-security-groups": "sg-057fed3770789add0",
-  "tracing-mode": "PassThrough",
-  "environment-variables": "\u0022ConnectionStrings__DefaultConnection\u0022=\u0022Server=ddac-assignment-rds.ckttvgpuhija.us-east-1.rds.amazonaws.com,1433;Database=DDAC;User Id=admin;Password=password123;TrustServerCertificate=True;\u0022",
-  "image-tag": "",
-  "function-description": ""
+  "function-subnets": "",
+  "function-security-groups": "",
+  "tracing-mode": "Active",
+  "environment-variables": "",
+  "image-tag": ""
 }
