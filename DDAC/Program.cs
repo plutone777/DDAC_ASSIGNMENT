@@ -1,5 +1,7 @@
 using DDAC.Data;
+using DDAC.Options;
 using DDAC.Services;
+using DDAC.Services.Employer;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,11 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
 builder.Services.AddScoped<S3Service>();
+builder.Services.AddScoped<IInterviewSchedulingService, InterviewSchedulingService>();
+builder.Services.Configure<EmployerInterviewOptions>(builder.Configuration.GetSection("EmployerInterview"));
+builder.Services.AddHttpClient<IInterviewApiClient, InterviewApiClient>(client => client.Timeout = TimeSpan.FromSeconds(5))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false, UseProxy = false })
+    .RemoveAllLoggers();
 
 var app = builder.Build();
 
