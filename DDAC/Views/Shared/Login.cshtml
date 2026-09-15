@@ -17,6 +17,11 @@
             <h1>Welcome Back</h1>
         </div>
 
+        @if (TempData["Error"] is string error)
+        {
+            <div class="alert alert-danger" role="alert">@error</div>
+        }
+
         <form asp-action="Login"
               method="post"
               class="auth-form">
