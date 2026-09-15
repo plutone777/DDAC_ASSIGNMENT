@@ -2,18 +2,26 @@
 using Microsoft.EntityFrameworkCore;
 using DDAC.Data;
 using DDAC.Models;
+using System.Text;
+using System.Text.Json;
 
 namespace DDAC.Controllers.CareerAdvisor
 {
     public class CareerAdvisorController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _config;
 
-        public CareerAdvisorController(ApplicationDbContext context)
+        public CareerAdvisorController(
+            ApplicationDbContext context,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration config)
         {
             _context = context;
+            _httpClientFactory = httpClientFactory;
+            _config = config;
         }
-
 
 
         //Career resources
@@ -268,6 +276,10 @@ namespace DDAC.Controllers.CareerAdvisor
             existing.ResolvedDate = DateTime.Now;
             await _context.SaveChangesAsync();
 
+            await SendNotificationAsync(
+                "Your inquiry has been answered",
+                $"Your inquiry \"{existing.Subject}\" has been answered by a career advisor. Log in to view the response.");
+
             return RedirectToAction("Inquiries");
         }
 
@@ -333,6 +345,11 @@ namespace DDAC.Controllers.CareerAdvisor
 
             _context.CareerRecommendations.Add(recommendation);
             await _context.SaveChangesAsync();
+
+            await SendNotificationAsync(
+                "You have a new recommendation",
+                $"A career advisor recommended \"{program.Title}\" for you.");
+
             return RedirectToAction("Recommendations");
         }
 
@@ -430,8 +447,32 @@ namespace DDAC.Controllers.CareerAdvisor
             request.Status = "Completed";
             await _context.SaveChangesAsync();
 
+            await SendNotificationAsync(
+                "Your guidance request has been completed",
+                $"Your request \"{request.Subject}\" has been reviewed by a career advisor.");
+
             return RedirectToAction("GuidanceRequests");
         }
+
+        private async Task SendNotificationAsync(string subject, string message)
+        {
+            // the notification service is independent — if it fails,
+            // the advisor's response is still saved
+            try
+            {
+                var url = _config["NotificationApi"];
+                var client = _httpClientFactory.CreateClient();
+
+                var payload = JsonSerializer.Serialize(new { subject, message });
+                var content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+                await client.PostAsync(url, content);
+            }
+            catch
+            {
+            }
+        }
     }
+
 
 }

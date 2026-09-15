@@ -1,8 +1,12 @@
 using DDAC.Data;
 using DDAC.Services;
 using Microsoft.EntityFrameworkCore;
+using Amazon.XRay.Recorder.Core;
+using Amazon.XRay.Recorder.Handlers.AwsSdk;
 
 var builder = WebApplication.CreateBuilder(args);
+AWSXRayRecorder.InitializeInstance(builder.Configuration);
+AWSSDKHandler.RegisterXRayForAllServices();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -15,7 +19,10 @@ builder.Services.AddSession();
 
 builder.Services.AddScoped<S3Service>();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
+app.UseXRay("DDACJobPortal");
 
 if (!app.Environment.IsDevelopment())
 {
