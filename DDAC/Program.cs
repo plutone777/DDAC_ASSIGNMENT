@@ -3,14 +3,19 @@ using DDAC.Services;
 using Microsoft.EntityFrameworkCore;
 using Amazon.XRay.Recorder.Core;
 using Amazon.XRay.Recorder.Handlers.AwsSdk;
+using Amazon.XRay.Recorder.Handlers.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
+
 AWSXRayRecorder.InitializeInstance(builder.Configuration);
 AWSSDKHandler.RegisterXRayForAllServices();
 
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection"))
+    .AddXRayInterceptor());
+
 
 builder.Services.AddControllersWithViews();
 
