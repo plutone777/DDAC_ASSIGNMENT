@@ -2,4 +2,6 @@
   <Project Path="DDAC/DDAC.csproj" />
   <Project Path="DDAC.Employer.Interviews.LocalApi/DDAC.Employer.Interviews.LocalApi.csproj" />
   <Project Path="tests/DDAC.Employer.Tests/DDAC.Employer.Tests.csproj" />
+  <Project Path="DDAC.Employer.Interviews.Lambda/DDAC.Employer.Interviews.Lambda.csproj" />
+  <Project Path="tests/DDAC.Employer.Lambda.Tests/DDAC.Employer.Lambda.Tests.csproj" />
 </Solution>

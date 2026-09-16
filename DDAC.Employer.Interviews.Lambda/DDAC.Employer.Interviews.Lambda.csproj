@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <AWSProjectType>Lambda</AWSProjectType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Amazon.Lambda.Core" Version="2.8.0" />
+    <PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="3.0.1" />
+    <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.4.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Compile the canonical sources without publishing MVC content or configuration. -->
+    <Compile Include="../DDAC/Data/ApplicationDbContext.cs" Link="Shared/ApplicationDbContext.cs" />
+    <Compile Include="../DDAC/Models/*.cs" Exclude="../DDAC/Models/ErrorViewModel.cs" Link="Shared/Models/%(Filename)%(Extension)" />
+    <Compile Include="../DDAC/Contracts/Employer/*.cs" Link="Shared/Contracts/%(Filename)%(Extension)" />
+    <Compile Include="../DDAC/Services/Employer/IInterviewSchedulingService.cs" Link="Shared/IInterviewSchedulingService.cs" />
+    <Compile Include="../DDAC/Services/Employer/InterviewSchedulingService.cs" Link="Shared/InterviewSchedulingService.cs" />
+    <Compile Include="../DDAC/Services/Employer/InterviewSchedulingResult.cs" Link="Shared/InterviewSchedulingResult.cs" />
+    <InternalsVisibleTo Include="DDAC.Employer.Lambda.Tests" />
+  </ItemGroup>
+</Project>

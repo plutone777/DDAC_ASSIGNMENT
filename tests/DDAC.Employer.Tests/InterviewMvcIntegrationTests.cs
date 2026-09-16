@@ -3,7 +3,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using DDAC.Models;
+using DDAC.Services.Employer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,6 +22,9 @@ public sealed class InterviewMvcIntegrationTests(ITestOutputHelper output)
         wire.ExpectedKey = app.CallerKey;
         wire.ExpectedEmployer = app.Owner.UserID.ToString();
         using var browser = app.Browser();
+        using var schedulingClient = app.Services.GetRequiredService<IHttpClientFactory>()
+            .CreateClient(nameof(IInterviewApiClient));
+        Assert.Equal(TimeSpan.FromSeconds(15), schedulingClient.Timeout);
         void Check(bool ok, string label)
         {
             Assert.True(ok, label);

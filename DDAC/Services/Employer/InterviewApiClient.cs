@@ -13,9 +13,9 @@ public sealed class InterviewApiClient(HttpClient http, IOptions<EmployerIntervi
     public async Task<InterviewApiResult> ScheduleAsync(int trustedEmployerId, ScheduleInterviewRequest request)
     {
         var options = settings.Value;
-        // Literal loopback only: no DNS, remote hosts, userinfo, query or fragment.
+        // Explicit local testing or the verified HTTPS API Gateway host; no redirects or fallback.
         if (!Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out var address) ||
-            address.Scheme is not ("http" or "https") || address.Host is not ("127.0.0.1" or "[::1]") ||
+            !IsAllowedEndpoint(address) ||
             address.AbsolutePath != "/" || address.Query.Length != 0 || address.Fragment.Length != 0 ||
             address.UserInfo.Length != 0 || string.IsNullOrWhiteSpace(options.CallerKey) || options.CallerKey.Length < 32 ||
             options.CallerKey.Any(char.IsControl) || trustedEmployerId <= 0)
@@ -48,4 +48,9 @@ public sealed class InterviewApiClient(HttpClient http, IOptions<EmployerIntervi
         catch (JsonException) { return new(null); }
         catch (NotSupportedException) { return new(null); }
     }
+
+    private static bool IsAllowedEndpoint(Uri address) =>
+        (address.Host is "127.0.0.1" or "[::1]" && address.Scheme is "http" or "https") ||
+        (address.Scheme == "https" && address.Port == 443 &&
+         address.Host == "4m5y4le116.execute-api.us-east-1.amazonaws.com");
 }

@@ -17,8 +17,12 @@ builder.Services.AddSession();
 
 builder.Services.AddScoped<S3Service>();
 builder.Services.AddScoped<IInterviewSchedulingService, InterviewSchedulingService>();
-builder.Services.Configure<EmployerInterviewOptions>(builder.Configuration.GetSection("EmployerInterview"));
-builder.Services.AddHttpClient<IInterviewApiClient, InterviewApiClient>(client => client.Timeout = TimeSpan.FromSeconds(5))
+builder.Services.Configure<EmployerInterviewOptions>(options =>
+{
+    options.BaseUrl = Environment.GetEnvironmentVariable("EmployerInterview__BaseUrl") ?? "";
+    options.CallerKey = Environment.GetEnvironmentVariable("EmployerInterview__CallerKey") ?? "";
+});
+builder.Services.AddHttpClient<IInterviewApiClient, InterviewApiClient>(client => client.Timeout = TimeSpan.FromSeconds(15))
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false, UseCookies = false, UseProxy = false })
     .RemoveAllLoggers();
 

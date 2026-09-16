@@ -36,6 +36,34 @@ public sealed class EmployerBaselineTests(ITestOutputHelper output)
         Check(response.StatusCode == HttpStatusCode.Redirect && response.Headers.Location?.OriginalString == "/Employer/Index", "Normal Employer authentication redirects to dashboard");
     }
 
+    [Fact]
+    public async Task Employer_sidebar_uses_shared_antiforgery_logout_and_clears_session()
+    {
+        using var app = new LocalBaselineFixture(startInterviewApi: false);
+        await app.InitializeAsync();
+        using var browser = app.Browser();
+        await LoginAsync(browser, app.Owner, app.Password);
+        using var page = await browser.GetAsync("/Employer/Index");
+        var html = await page.Content.ReadAsStringAsync();
+        var form = Regex.Match(html, "<form[^>]*action=\"/User/LogoutJS\"[^>]*>.*?</form>", RegexOptions.Singleline);
+        Assert.True(form.Success);
+        Assert.Contains("method=\"post\"", form.Value);
+        Assert.Contains("Logout</button>", form.Value);
+        var token = Regex.Match(form.Value, "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"");
+        Assert.True(token.Success);
+        using var denied = await browser.PostAsync("/User/LogoutJS", new FormUrlEncodedContent(new Dictionary<string, string>()));
+        Assert.Equal(HttpStatusCode.BadRequest, denied.StatusCode);
+        using var logout = await browser.PostAsync("/User/LogoutJS", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["__RequestVerificationToken"] = WebUtility.HtmlDecode(token.Groups[1].Value)
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, logout.StatusCode);
+        Assert.True(logout.Headers.Location?.OriginalString is "/" or "/User/Login");
+        using var dashboard = await browser.GetAsync("/Employer/Index");
+        Assert.Equal(HttpStatusCode.Redirect, dashboard.StatusCode);
+        Assert.True(dashboard.Headers.Location?.OriginalString is "/" or "/User/Login");
+    }
+
     // One ordered Fact deliberately stops the entire baseline at its first failure.
     [Fact]
     public async Task Local_only_baseline_stops_at_first_failure()
