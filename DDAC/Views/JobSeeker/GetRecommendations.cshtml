@@ -1,0 +1,178 @@
+﻿@model IEnumerable<DDAC.Models.CareerRecommendation>
+
+@{
+    ViewData["Title"] = "My Recommendations";
+
+    var advisors = ViewBag.Advisors
+        as IEnumerable<DDAC.Models.CareerAdvisorProfile>;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeeker.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/JobSeeker/JobSeekerJobs.css"
+          asp-append-version="true" />
+}
+
+<div class="jobseeker-page">
+
+    <partial name="~/Views/JobSeeker/_JobSeekerSidebar.cshtml" />
+
+    <main class="jobseeker-main">
+
+        <div class="page-header">
+
+            <h1>My Career Recommendations</h1>
+
+            <p>
+                View personalised career recommendations provided
+                by your career advisors.
+            </p>
+
+        </div>
+
+        <div class="action-area"
+             style="margin-bottom: 25px; padding-top: 0; border-top: none;">
+
+            <a asp-controller="Inquiry"
+               asp-action="CareerSupport"
+               class="primary-button">
+                Career Support
+            </a>
+
+        </div>
+
+        <div class="content-list">
+
+            @if (Model != null && Model.Any())
+            {
+                foreach (var recommendation in Model)
+                {
+                    var advisor = advisors?
+                        .FirstOrDefault(a =>
+                            a.AdvisorID == recommendation.AdvisorID);
+
+                    <div class="list-card">
+
+                        <div class="list-card-header">
+
+                            <div>
+
+                                <h2 class="list-card-title">
+                                    @recommendation.Title
+                                </h2>
+
+                                <p class="list-card-subtitle">
+
+                                    @if (advisor?.User != null)
+                                    {
+                                        <span>
+                                            Advisor:
+                                            <strong>
+                                                @advisor.User.FullName
+                                            </strong>
+                                        </span>
+
+                                        @if (!string.IsNullOrWhiteSpace(advisor.Specialisation))
+                                        {
+                                            <span>
+                                                · @advisor.Specialisation
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Advisor information unavailable
+                                        </span>
+                                    }
+
+                                </p>
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                recommendation.RecommendationType))
+                            {
+                                <span class="tag tag-status">
+                                    @recommendation.RecommendationType
+                                </span>
+                            }
+
+                        </div>
+
+                        <div class="job-description">
+
+                            <span class="job-label">
+                                Recommendation
+                            </span>
+
+                            <p class="description-text">
+                                @recommendation.Description
+                            </p>
+
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            recommendation.Reason))
+                        {
+                            <div class="job-description">
+
+                                <span class="job-label">
+                                    Why This Was Recommended
+                                </span>
+
+                                <p class="description-text">
+                                    @recommendation.Reason
+                                </p>
+
+                            </div>
+                        }
+
+                        <div class="job-card-details">
+
+                            <span class="detail-item">
+                                <strong>Sent:</strong>
+                                @recommendation.DateCreated.ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+
+                    <h2>No Recommendations Yet</h2>
+
+                    <p>
+                        You don't have any career recommendations yet.
+                    </p>
+
+                    <p>
+                        Your career advisor may provide a personalised
+                        recommendation after reviewing your career
+                        guidance request.
+                    </p>
+
+                    <br />
+
+                    <a asp-controller="Inquiry"
+                       asp-action="CareerSupport"
+                       class="primary-button">
+                        Get Career Support
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>

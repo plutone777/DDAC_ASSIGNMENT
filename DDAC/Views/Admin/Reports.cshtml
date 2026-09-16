@@ -1,0 +1,82 @@
+@using DDAC.Models.Admin
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "_AdminLayout";
+
+    bool useMicroservices = ViewBag.UseMicroservices == true;
+    List<ReportSummary> generated = ViewBag.GeneratedReports as List<ReportSummary> ?? new List<ReportSummary>();
+}
+
+<div class="admin-panel">
+
+    <div class="admin-stats">
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">User Activity</span>
+            <span class="admin-stat-value">@ViewBag.TotalUsers</span>
+            <span class="card-body">total users - @ViewBag.ActiveUsers active, @ViewBag.SuspendedUsers suspended</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Employer Verification</span>
+            <span class="admin-stat-value">@ViewBag.TotalEmployers</span>
+            <span class="card-body">total employers - @ViewBag.ApprovedEmployers approved, @ViewBag.PendingEmployers pending</span>
+        </div>
+        <div class="card elev-sm admin-stat">
+            <span class="card-kicker">Employment Statistics</span>
+            <span class="admin-stat-value">@ViewBag.TotalJobPostings</span>
+            <span class="card-body">total job postings - @ViewBag.OpenJobPostings currently open</span>
+
+            @if (useMicroservices)
+            {
+                <form asp-controller="Admin" asp-action="RequestEmploymentReport" method="post" style="margin-top:var(--space-2)">
+                    <button type="submit" class="btn btn-primary">Generate Report</button>
+                </form>
+            }
+            else
+            {
+                <a class="btn btn-primary" style="margin-top:var(--space-2)" asp-controller="Admin" asp-action="GenerateEmploymentReport">Generate Report</a>
+            }
+        </div>
+    </div>
+
+    @if (useMicroservices)
+    {
+        <div class="card elev-sm" style="margin-top:var(--space-4)">
+            <h2 class="card-title" style="margin-bottom:var(--space-3)">Report archive</h2>
+
+            @if (!generated.Any())
+            {
+                <div class="admin-empty">
+                    <p>No reports generated yet.</p>
+                    <p style="font-size:12px">Use Generate Report above to queue one.</p>
+                </div>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Generated</th>
+                            <th>Size</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var report in generated)
+                        {
+                            <tr>
+                                <td><strong>@report.FileName</strong></td>
+                                <td>@report.LastModified.ToLocalTime().ToString("d MMM yyyy, HH:mm")</td>
+                                <td>@(Math.Round(report.SizeBytes / 1024.0, 1)) KB</td>
+                                <td style="text-align:right">
+                                    <a class="btn btn-secondary" href="@report.DownloadUrl" target="_blank" rel="noopener">Download</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    }
+
+</div>

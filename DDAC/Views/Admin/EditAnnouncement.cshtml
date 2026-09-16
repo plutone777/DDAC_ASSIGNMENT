@@ -1,0 +1,36 @@
+﻿@model Announcement
+
+@{
+    ViewData["Title"] = "Edit Announcement";
+    Layout = "_AdminLayout";
+}
+
+<div class="admin-toolbar" style="margin-bottom:var(--space-3)">
+    <a class="btn btn-secondary" asp-controller="Admin" asp-action="Announcements">&larr; Back to Announcements</a>
+</div>
+
+<div class="card elev-sm" style="max-width:560px">
+    <form asp-controller="Admin" asp-action="EditAnnouncement" asp-route-id="@Model.AnnouncementID" method="post">
+
+        <div class="field">
+            <label asp-for="Title">Headline</label>
+            <input class="input" asp-for="Title" placeholder="Give the announcement a headline" />
+            <span asp-validation-for="Title" style="color:var(--color-accent-800);font-size:12px"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Content">Message</label>
+            <textarea class="input" asp-for="Content" placeholder="Write the announcement..."></textarea>
+            <span asp-validation-for="Content" style="color:var(--color-accent-800);font-size:12px"></span>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:var(--space-2)">
+            <button type="submit" name="action" value="draft" class="btn btn-secondary" style="flex:1">Save as draft</button>
+            <button type="submit" name="action" value="publish" class="btn btn-primary" style="flex:1">Publish</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
