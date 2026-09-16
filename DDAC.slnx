@@ -1,9 +1,9 @@
 <Solution>
-  <Folder Name="/Microservices/" />
-  <Folder Name="/Microservices/Employer/">
+  <Folder Name="/Lambdas/" />
+  <Folder Name="/Lambdas/Employer/">
     <Project Path="../../../Downloads/Compressed/DDAC_ASSIGNMENT-feature-assignment-2-employer/DDAC_ASSIGNMENT-feature-assignment-2-employer/DDAC.Employer.Interviews.Lambda/DDAC.Employer.Interviews.Lambda.csproj" />
   </Folder>
-  <Folder Name="/Microservices/JobSeeker/">
+  <Folder Name="/Lambdas/JobSeeker/">
     <Project Path="../../../Downloads/Compressed/DDAC_ASSIGNMENT-Mayan-Task2/DDAC_ASSIGNMENT-Mayan-Task2/DDAC.JS.GuidanceLambda/DDAC.JS.GuidanceLambda.csproj" />
     <Project Path="../../../Downloads/Compressed/DDAC_ASSIGNMENT-Mayan-Task2/DDAC_ASSIGNMENT-Mayan-Task2/DDAC.JS.InquiryLambda/DDAC.JS.InquiryLambda.csproj" />
     <Project Path="../../../Downloads/Compressed/DDAC_ASSIGNMENT-Mayan-Task2/DDAC_ASSIGNMENT-Mayan-Task2/DDAC.JS.JobApplicationLambda/DDAC.JS.JobApplicationLambda.csproj" />

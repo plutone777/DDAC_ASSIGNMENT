@@ -15,9 +15,9 @@ namespace DDAC.Services
             _configuration = configuration;
 
             var region = _configuration["AWS:region"];
-            _bucketName = _configuration["AWS:bucket_name"]
+            _bucketName = _configuration["AWS:resume_bucket_name"]
                 ?? throw new InvalidOperationException(
-                    "AWS bucket name is not configured.");
+                    "AWS resume bucket name is not configured.");
 
             _s3Client = new AmazonS3Client(
                 RegionEndpoint.GetBySystemName(region)

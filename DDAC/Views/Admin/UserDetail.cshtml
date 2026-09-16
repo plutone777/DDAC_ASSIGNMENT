@@ -15,7 +15,17 @@
 
     <div class="admin-toolbar">
         <a class="btn btn-secondary" asp-controller="Admin" asp-action="@backAction">@backLabel</a>
-        <a class="btn btn-primary" style="margin-left:auto" asp-controller="Admin" asp-action="GenerateUserReport" asp-route-id="@Model.User.UserID">Generate Report</a>
+        @if (ViewBag.UseMicroservices == true)
+        {
+            <form asp-controller="Admin" asp-action="RequestUserReport" method="post" style="margin-left:auto">
+                <input type="hidden" name="id" value="@Model.User.UserID" />
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+            </form>
+        }
+        else
+        {
+            <a class="btn btn-primary" style="margin-left:auto" asp-controller="Admin" asp-action="GenerateUserReport" asp-route-id="@Model.User.UserID">Generate Report</a>
+        }
     </div>
 
     <div class="card elev-sm">

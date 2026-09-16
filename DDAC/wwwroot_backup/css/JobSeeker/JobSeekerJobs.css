@@ -1,0 +1,212 @@
+﻿.job-accessibility-section {
+    margin-bottom: 13px;
+}
+
+    .job-accessibility-section:last-child {
+        margin-bottom: 0;
+    }
+
+.job-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #645c50;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.job-description {
+    margin: 18px 0;
+    color: #474238;
+    font-family: "Figtree", system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.job-card-details {
+    display: flex;
+    gap: 26px;
+    margin-top: 18px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(32, 30, 29, 0.16);
+    color: #645c50;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 13px;
+}
+
+.job-card-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 13px;
+    color: #82796a;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 13px;
+}
+
+.job-details-card {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 26px;
+    border-radius: 32px;
+    background: linear-gradient(168deg, #fffaf1 0%, #f9f4ed 100%);
+    border: 1px solid #eee7db;
+    box-shadow: 0 1px 2px rgba(46, 43, 37, 0.14);
+}
+
+.job-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 26px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid rgba(32, 30, 29, 0.16);
+}
+
+    .job-details-header h1 {
+        margin: 0;
+        color: #201e1d;
+        font-family: "Caprasimo", system-ui, sans-serif;
+        font-size: 34px;
+        font-weight: 400;
+        line-height: 1.12;
+        letter-spacing: -0.015em;
+    }
+
+.job-details-location {
+    margin: 9px 0 0;
+    color: #82796a;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 14px;
+}
+
+.job-status {
+    flex-shrink: 0;
+}
+
+.employer-card {
+    display: flex;
+    gap: 18px;
+    padding: 26px;
+    background: #f9f4ed;
+    border: 1px solid #eee7db;
+    border-radius: 16px;
+}
+
+.employer-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 55px;
+    height: 55px;
+    background: #ffe1d0;
+    color: #643312;
+    border: 1px solid #ffc6a5;
+    border-radius: 16px;
+    font-size: 24px;
+}
+
+.employer-info {
+    flex: 1;
+    min-width: 0;
+}
+
+    .employer-info h3 {
+        margin: 0;
+        color: #201e1d;
+        font-family: "Caprasimo", system-ui, sans-serif;
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1.2;
+    }
+
+.employer-industry {
+    margin: 5px 0 17px;
+    color: #82796a;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 13px;
+}
+
+.employer-description {
+    margin: 0 0 18px;
+    color: #474238;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.employer-card .detail-list {
+    padding-top: 13px;
+    border-top: 1px solid rgba(32, 30, 29, 0.16);
+}
+
+.employer-card .detail-item {
+    color: #645c50;
+    font-family: "Figtree", system-ui, sans-serif;
+    line-height: 1.5;
+}
+
+    .employer-card .detail-item strong {
+        color: #2e2b25;
+    }
+
+    .employer-card .detail-item a {
+        color: #c67139;
+    }
+
+.inquiry-response {
+    margin-top: 18px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(32, 30, 29, 0.16);
+}
+
+    .inquiry-response .job-label {
+        margin-bottom: 6px;
+    }
+
+@media (max-width: 900px) {
+    .job-details-card {
+        padding: 26px;
+    }
+
+    .job-card-details {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .job-card-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .job-details-card {
+        padding: 18px;
+    }
+
+    .job-details-header {
+        flex-direction: column;
+    }
+
+        .job-details-header h1 {
+            font-size: 26px;
+        }
+
+    .employer-card {
+        flex-direction: column;
+        gap: 13px;
+        padding: 18px;
+    }
+
+    .employer-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .job-card-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+}

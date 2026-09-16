@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 AWSXRayRecorder.InitializeInstance(builder.Configuration);
 AWSSDKHandler.RegisterXRayForAllServices();
 
+// Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"))
@@ -24,6 +25,19 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
 builder.Services.AddScoped<S3Service>();
+
+// Admin API Client
+builder.Services.AddHttpClient<AdminApiClient>(client =>
+{
+    var baseUrl = builder.Configuration["Microservices:BaseUrl"];
+
+    if (!string.IsNullOrWhiteSpace(baseUrl))
+    {
+        client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/");
+    }
+
+    client.Timeout = TimeSpan.FromSeconds(20);
+});
 
 // Job Application Service
 builder.Services.AddScoped<JobApplicationService>();

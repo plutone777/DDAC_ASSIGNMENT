@@ -1,6 +1,7 @@
 using DDAC.Data;
 using DDAC.Models;
 using DDAC.Models.Admin;
+using DDAC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,21 @@ namespace DDAC.Controllers.Admin
     public class AdminController : Controller, IAsyncActionFilter
     {
         private readonly ApplicationDbContext _context;
+        private readonly AdminApiClient _api;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(ApplicationDbContext context)
+        private readonly bool _useMicroservices;
+
+        public AdminController(
+            ApplicationDbContext context,
+            AdminApiClient api,
+            IConfiguration configuration,
+            ILogger<AdminController> logger)
         {
             _context = context;
+            _api = api;
+            _logger = logger;
+            _useMicroservices = configuration.GetValue<bool>("Microservices:Enabled");
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -38,6 +50,8 @@ namespace DDAC.Controllers.Admin
                 .Equals("true", StringComparison.OrdinalIgnoreCase);
             ViewBag.ScreenReaderHints = accessibilitySettings.GetValueOrDefault("ScreenReaderHints", "false")
                 .Equals("true", StringComparison.OrdinalIgnoreCase);
+
+            ViewBag.UseMicroservices = _useMicroservices;
 
             await next();
         }
@@ -323,6 +337,19 @@ namespace DDAC.Controllers.Admin
 
         public async Task<IActionResult> EmployerVerification()
         {
+            if (_useMicroservices)
+            {
+                try
+                {
+                    return View(await _api.GetPendingEmployersAsync());
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "employer-verification microservice unavailable");
+                    TempData["Flash"] = "Verification service unavailable. Showing cached data.";
+                }
+            }
+
             var pending = await _context.EmployerProfiles
                 .Where(e => e.VerificationStatus == "Pending")
                 .ToListAsync();
@@ -330,28 +357,46 @@ namespace DDAC.Controllers.Admin
         }
 
         [HttpPost]
-        public async Task<IActionResult> ApproveEmployer(int id)
-        {
-            var employer = await _context.EmployerProfiles.FindAsync(id);
-            if (employer != null)
-            {
-                employer.VerificationStatus = "Approved";
-                await _context.SaveChangesAsync();
-                TempData["Flash"] = employer.CompanyName + " approved. They can post vacancies now.";
-            }
-
-            return RedirectToAction("EmployerVerification");
-        }
+        public Task<IActionResult> ApproveEmployer(int id) => DecideEmployer(id, "Approved");
 
         [HttpPost]
-        public async Task<IActionResult> RejectEmployer(int id)
+        public Task<IActionResult> RejectEmployer(int id) => DecideEmployer(id, "Rejected");
+
+        private async Task<IActionResult> DecideEmployer(int id, string decision)
         {
+            if (_useMicroservices)
+            {
+                try
+                {
+                    var result = await _api.DecideEmployerAsync(id, decision);
+                    if (result == null)
+                    {
+                        TempData["Flash"] = "Employer not found.";
+                    }
+                    else
+                    {
+                        TempData["Flash"] = decision == "Approved"
+                            ? result.CompanyName + " approved. They can post vacancies now. Notification sent via SNS."
+                            : result.CompanyName + " rejected. Notification sent via SNS.";
+                    }
+
+                    return RedirectToAction("EmployerVerification");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "employer-verification microservice failed, falling back");
+                    TempData["Flash"] = "Verification service unavailable - the decision was saved locally instead.";
+                }
+            }
+
             var employer = await _context.EmployerProfiles.FindAsync(id);
             if (employer != null)
             {
-                employer.VerificationStatus = "Rejected";
+                employer.VerificationStatus = decision;
                 await _context.SaveChangesAsync();
-                TempData["Flash"] = employer.CompanyName + " rejected.";
+                TempData["Flash"] = decision == "Approved"
+                    ? employer.CompanyName + " approved. They can post vacancies now."
+                    : employer.CompanyName + " rejected.";
             }
 
             return RedirectToAction("EmployerVerification");
@@ -441,6 +486,19 @@ namespace DDAC.Controllers.Admin
 
         public async Task<IActionResult> Announcements()
         {
+            if (_useMicroservices)
+            {
+                try
+                {
+                    return View(await _api.GetAnnouncementsAsync());
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "announcement microservice unavailable");
+                    TempData["Flash"] = "Announcement service unavailable. Showing cached data.";
+                }
+            }
+
             var announcements = await _context.Announcements
                 .OrderByDescending(a => a.PublishedDate)
                 .ToListAsync();
@@ -453,7 +511,7 @@ namespace DDAC.Controllers.Admin
             return View();
         }
 
-        // "draft" or "publish
+        // action is "draft" or "publish"
         [HttpPost]
         public async Task<IActionResult> CreateAnnouncement(Announcement model, string action)
         {
@@ -466,6 +524,24 @@ namespace DDAC.Controllers.Admin
             model.PublishedDate = DateTime.Now;
             model.Status = action == "draft" ? "Draft" : "Published";
 
+            if (_useMicroservices)
+            {
+                try
+                {
+                    var created = await _api.CreateAnnouncementAsync(model);
+                    TempData["Flash"] = created?.Status == "Draft"
+                        ? "Announcement saved as draft."
+                        : "Announcement published. Subscribers notified via SNS.";
+
+                    return RedirectToAction("Announcements");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "announcement microservice failed, falling back");
+                    TempData["Flash"] = "Announcement service unavailable - saved locally instead.";
+                }
+            }
+
             _context.Announcements.Add(model);
             await _context.SaveChangesAsync();
             TempData["Flash"] = model.Status == "Draft" ? "Announcement saved as draft." : "Announcement published.";
@@ -476,12 +552,33 @@ namespace DDAC.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> DeleteAnnouncement(int id, string? returnUrl)
         {
-            var announcement = await _context.Announcements.FindAsync(id);
-            if (announcement != null)
+            var handled = false;
+
+            if (_useMicroservices)
             {
-                _context.Announcements.Remove(announcement);
-                await _context.SaveChangesAsync();
-                TempData["Flash"] = announcement.Title + " removed.";
+                try
+                {
+                    if (await _api.DeleteAnnouncementAsync(id))
+                    {
+                        TempData["Flash"] = "Announcement removed.";
+                    }
+                    handled = true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "announcement microservice failed, falling back");
+                }
+            }
+
+            if (!handled)
+            {
+                var announcement = await _context.Announcements.FindAsync(id);
+                if (announcement != null)
+                {
+                    _context.Announcements.Remove(announcement);
+                    await _context.SaveChangesAsync();
+                    TempData["Flash"] = announcement.Title + " removed.";
+                }
             }
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -495,6 +592,20 @@ namespace DDAC.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> EditAnnouncement(int id)
         {
+            if (_useMicroservices)
+            {
+                try
+                {
+                    var fromApi = await _api.GetAnnouncementAsync(id);
+                    if (fromApi == null) return NotFound();
+                    return View(fromApi);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "announcement microservice unavailable");
+                }
+            }
+
             var announcement = await _context.Announcements.FindAsync(id);
             if (announcement == null)
             {
@@ -507,6 +618,33 @@ namespace DDAC.Controllers.Admin
         [HttpPost]
         public async Task<IActionResult> EditAnnouncement(int id, Announcement model, string action)
         {
+            if (_useMicroservices)
+            {
+                if (!ModelState.IsValid)
+                {
+                    model.AnnouncementID = id;
+                    return View(model);
+                }
+
+                try
+                {
+                    model.Status = action == "draft" ? "Draft" : "Published";
+                    var updated = await _api.UpdateAnnouncementAsync(id, model);
+                    if (updated == null) return NotFound();
+
+                    TempData["Flash"] = updated.Status == "Draft"
+                        ? "Announcement saved as draft."
+                        : "Announcement updated and published.";
+
+                    return RedirectToAction("Announcements");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "announcement microservice failed, falling back");
+                    TempData["Flash"] = "Announcement service unavailable - saved locally instead.";
+                }
+            }
+
             var announcement = await _context.Announcements.FindAsync(id);
             if (announcement == null)
             {
@@ -544,7 +682,69 @@ namespace DDAC.Controllers.Admin
             ViewBag.TotalJobPostings = await _context.JobVacancies.CountAsync();
             ViewBag.OpenJobPostings = await _context.JobVacancies.CountAsync(j => j.Status == "Open");
 
+            ViewBag.UseMicroservices = _useMicroservices;
+            ViewBag.GeneratedReports = new List<ReportSummary>();
+
+            if (_useMicroservices)
+            {
+                try
+                {
+                    ViewBag.GeneratedReports = await _api.GetReportsAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "report-list microservice unavailable");
+                    TempData["Flash"] = "Could not load the report archive from S3.";
+                }
+            }
+
             return View();
+        }
+
+        private static string ShortRequestId(string? requestId)
+        {
+            if (string.IsNullOrEmpty(requestId)) return "pending";
+            return requestId.Length <= 8 ? requestId : requestId.Substring(0, 8);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RequestEmploymentReport()
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("Email") ?? "admin";
+                var result = await _api.RequestReportAsync("Employment", null, email);
+                var shortId = ShortRequestId(result?.RequestID);
+                TempData["Flash"] = "Report queued (request " + shortId +
+                                    "). It will appear in the archive below once generated.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "report-request microservice failed");
+                TempData["Flash"] = "Could not queue the report - the reporting service is unavailable.";
+            }
+
+            return RedirectToAction("Reports");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RequestUserReport(int id)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("Email") ?? "admin";
+                var result = await _api.RequestReportAsync("User", id, email);
+                var shortId = ShortRequestId(result?.RequestID);
+                TempData["Flash"] = "User report queued (request " + shortId +
+                                    "). It will appear on the Reports page once generated.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "report-request microservice failed");
+                TempData["Flash"] = "Could not queue the report - the reporting service is unavailable.";
+            }
+
+            return RedirectToAction("UserDetail", new { id });
         }
 
         // Downloadable platform-wide report - user activity, employer
