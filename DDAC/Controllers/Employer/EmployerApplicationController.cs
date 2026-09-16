@@ -1,5 +1,7 @@
 using DDAC.Data;
+using DDAC.Contracts.Employer;
 using DDAC.Models;
+using DDAC.Services.Employer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,12 +9,15 @@ namespace DDAC.Controllers.Employer;
 
 public class EmployerApplicationController : EmployerControllerBase
 {
-    private static readonly IReadOnlyList<string> InterviewTypes = ["On-site", "Online", "Phone"];
     private readonly ApplicationDbContext _context;
+    private readonly IInterviewSchedulingService _interviewScheduling;
+    private readonly IInterviewApiClient _interviewApi;
 
-    public EmployerApplicationController(ApplicationDbContext context)
+    public EmployerApplicationController(ApplicationDbContext context, IInterviewSchedulingService interviewScheduling, IInterviewApiClient interviewApi)
     {
         _context = context;
+        _interviewScheduling = interviewScheduling;
+        _interviewApi = interviewApi;
     }
 
     [HttpGet]
@@ -136,12 +141,12 @@ public class EmployerApplicationController : EmployerControllerBase
 
         ViewBag.Application = result.Value.Application;
         ViewBag.Job = result.Value.Job;
-        ViewBag.InterviewTypes = InterviewTypes;
+        ViewBag.InterviewTypes = _interviewScheduling.InterviewTypes;
         return View(EmployerViewRoot + "CreateInterview.cshtml", new JobInterview
         {
             ApplicationID = applicationId,
             InterviewDate = DateTime.Now.AddDays(1),
-            InterviewType = InterviewTypes[0],
+            InterviewType = _interviewScheduling.InterviewTypes[0],
             Location = string.Empty,
             Notes = string.Empty
         });
@@ -158,57 +163,49 @@ public class EmployerApplicationController : EmployerControllerBase
             return RedirectToLogin();
         }
 
-        var result = await FindOwnedApplication(input.ApplicationID, employerId.Value);
-        if (result is null)
+        ModelState.Remove(nameof(JobInterview.Location));
+        ModelState.Remove(nameof(JobInterview.Notes));
+        ModelState.Remove(nameof(JobInterview.Status));
+        var owned = await FindOwnedApplication(input.ApplicationID, employerId.Value);
+        if (owned is null)
         {
             return NotFound();
         }
 
-        ModelState.Remove(nameof(JobInterview.Location));
-        ModelState.Remove(nameof(JobInterview.Notes));
-        ModelState.Remove(nameof(JobInterview.Status));
-        input.Location = input.Location?.Trim() ?? string.Empty;
-        input.Notes = input.Notes?.Trim() ?? string.Empty;
-
-        var normalizedType = InterviewTypes.FirstOrDefault(type =>
-            string.Equals(type, input.InterviewType, StringComparison.OrdinalIgnoreCase));
-        if (normalizedType is null)
+        if (ModelState.IsValid)
         {
-            ModelState.AddModelError(nameof(input.InterviewType), "Select a valid interview type.");
+            var result = await _interviewApi.ScheduleAsync(employerId.Value, new ScheduleInterviewRequest
+            {
+                ApplicationID = input.ApplicationID, InterviewDate = input.InterviewDate,
+                InterviewType = input.InterviewType, Location = input.Location, Notes = input.Notes
+            });
+            if (result.Response?.Success == true)
+            {
+                TempData["Success"] = "Interview scheduled successfully.";
+                return RedirectToAction(nameof(ApplicationDetails), new { id = input.ApplicationID });
+            }
+            if (result.Response?.ErrorCode == ScheduleInterviewResponse.NotFound) return NotFound();
+            if (result.Response?.ErrorCode == ScheduleInterviewResponse.ValidationFailed)
+            {
+                foreach (var error in result.Response.Errors)
+                {
+                    var field = error.Key switch
+                    {
+                        "applicationID" => nameof(input.ApplicationID), "interviewDate" => nameof(input.InterviewDate),
+                        "interviewType" => nameof(input.InterviewType), "location" => nameof(input.Location),
+                        "notes" => nameof(input.Notes), _ => ""
+                    };
+                    foreach (var message in error.Value) ModelState.AddModelError(field, message);
+                }
+            }
+            else ModelState.AddModelError("", result.Unavailable
+                ? "Interview scheduling is temporarily unavailable. Check application details before submitting again."
+                : "Unable to confirm interview scheduling. Check application details before submitting again.");
         }
-        else
-        {
-            input.InterviewType = normalizedType;
-        }
-
-        if (input.InterviewDate <= DateTime.Now)
-        {
-            ModelState.AddModelError(nameof(input.InterviewDate), "Interview date must be in the future.");
-        }
-
-        if (input.InterviewType == "On-site" && string.IsNullOrWhiteSpace(input.Location))
-        {
-            ModelState.AddModelError(nameof(input.Location), "Enter a location for an on-site interview.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            ViewBag.Application = result.Value.Application;
-            ViewBag.Job = result.Value.Job;
-            ViewBag.InterviewTypes = InterviewTypes;
-            return View(EmployerViewRoot + "CreateInterview.cshtml", input);
-        }
-
-        input.Status = "Scheduled";
-        _context.JobInterviews.Add(input);
-        if (result.Value.Application.Status is "Submitted" or "Under Review")
-        {
-            result.Value.Application.Status = "Shortlisted";
-        }
-
-        await _context.SaveChangesAsync();
-        TempData["Success"] = "Interview scheduled successfully.";
-        return RedirectToAction(nameof(ApplicationDetails), new { id = input.ApplicationID });
+        ViewBag.Application = owned.Value.Application;
+        ViewBag.Job = owned.Value.Job;
+        ViewBag.InterviewTypes = _interviewScheduling.InterviewTypes;
+        return View(EmployerViewRoot + "CreateInterview.cshtml", input);
     }
 
     private async Task<(JobApplication Application, JobVacancy Job)?> FindOwnedApplication(

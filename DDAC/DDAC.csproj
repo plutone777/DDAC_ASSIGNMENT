@@ -18,9 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Employer\" />
     <Folder Include="Migrations\" />
-    <Folder Include="Views\Employer\" />
     <Folder Include="wwwroot\uploads\resumes\" />
   </ItemGroup>
 

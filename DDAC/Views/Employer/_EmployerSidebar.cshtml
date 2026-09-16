@@ -17,6 +17,9 @@
         <a class="nav-link @Active("EmployerApplication", "Applications", "ApplicationDetails", "CreateInterview")" asp-controller="EmployerApplication" asp-action="Applications">Applications</a>
         <a class="nav-link @Active("Employer", "HiringGuidance")" asp-controller="Employer" asp-action="HiringGuidance">Hiring guidance</a>
         <a class="nav-link @Active("EmployerInquiry", "Inquiries", "CreateInquiry", "InquiryDetails")" asp-controller="EmployerInquiry" asp-action="Inquiries">Advisor inquiries</a>
+        <form asp-controller="User" asp-action="LogoutJS" method="post">
+            <button type="submit" class="nav-link w-100 text-start border-0">Logout</button>
+        </form>
     </nav>
 </aside>
 
