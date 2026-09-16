@@ -33,15 +33,25 @@ public class Function
     }
 
     public async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
-        APIGatewayHttpApiV2ProxyRequest request,
-        ILambdaContext context)
+    APIGatewayHttpApiV2ProxyRequest request,
+    ILambdaContext context)
     {
+        context.Logger.LogLine(
+            $"RAW REQUEST BODY: {request.Body}");
+
         var guidance =
             JsonSerializer.Deserialize<CareerGuidance>(
-                request.Body);
+                request.Body,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
         if (guidance == null)
         {
+            context.Logger.LogLine(
+                "GUIDANCE DESERIALIZATION FAILED.");
+
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
@@ -49,8 +59,16 @@ public class Function
             };
         }
 
+        context.Logger.LogLine(
+            $"GUIDANCE RECEIVED: JobSeekerID={guidance.JobSeekerID}, " +
+            $"AdvisorID={guidance.AdvisorID}, " +
+            $"GuidanceType={guidance.GuidanceType}, " +
+            $"Subject={guidance.Subject}");
+
         if (guidance.JobSeekerID <= 0)
         {
+            context.Logger.LogLine("INVALID JOBSEEKER ID.");
+
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
@@ -60,6 +78,8 @@ public class Function
 
         if (guidance.AdvisorID <= 0)
         {
+            context.Logger.LogLine("INVALID ADVISOR ID.");
+
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
@@ -69,6 +89,8 @@ public class Function
 
         if (string.IsNullOrWhiteSpace(guidance.GuidanceType))
         {
+            context.Logger.LogLine("GUIDANCE TYPE IS EMPTY.");
+
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
@@ -78,6 +100,8 @@ public class Function
 
         if (string.IsNullOrWhiteSpace(guidance.Subject))
         {
+            context.Logger.LogLine("SUBJECT IS EMPTY.");
+
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
@@ -87,6 +111,8 @@ public class Function
 
         if (string.IsNullOrWhiteSpace(guidance.GuidanceNotes))
         {
+            context.Logger.LogLine("GUIDANCE NOTES ARE EMPTY.");
+
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 StatusCode = 400,
@@ -94,12 +120,30 @@ public class Function
             };
         }
 
+        context.Logger.LogLine(
+            "VALIDATION PASSED. SAVING GUIDANCE TO RDS.");
+
         guidance.GuidanceDate = DateTime.Now;
         guidance.Status = "Requested";
 
         _context.CareerGuidances.Add(guidance);
 
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+
+            context.Logger.LogLine(
+                $"GUIDANCE SAVED: GuidanceID={guidance.GuidanceID}, " +
+                $"JobSeekerID={guidance.JobSeekerID}, " +
+                $"AdvisorID={guidance.AdvisorID}");
+        }
+        catch (Exception ex)
+        {
+            context.Logger.LogLine(
+                $"GUIDANCE SAVE ERROR: {ex}");
+
+            throw;
+        }
 
         return new APIGatewayHttpApiV2ProxyResponse
         {

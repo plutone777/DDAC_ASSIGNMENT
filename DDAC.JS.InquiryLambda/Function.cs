@@ -36,9 +36,15 @@ public class Function
         APIGatewayHttpApiV2ProxyRequest request,
         ILambdaContext context)
     {
+        context.Logger.LogLine($"RAW REQUEST BODY: {request.Body}");
+
         var inquiry =
             JsonSerializer.Deserialize<Inquiry>(
-                request.Body);
+                request.Body,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
         if (inquiry == null)
         {
@@ -61,9 +67,26 @@ public class Function
         inquiry.Status = "Open";
         inquiry.CreatedDate = DateTime.Now;
 
+        context.Logger.LogLine("BEFORE ADD");
+
         _context.Inquiries.Add(inquiry);
 
-        await _context.SaveChangesAsync();
+        context.Logger.LogLine("BEFORE SAVE");
+
+        try
+        {
+            await _context.SaveChangesAsync();
+
+            context.Logger.LogLine("AFTER SAVE");
+
+            context.Logger.LogLine(
+                $"INQUIRY SAVED: InquiryID={inquiry.InquiryID}, UserID={inquiry.UserID}, AdvisorID={inquiry.AdvisorID}");
+        }
+        catch (Exception ex)
+        {
+            context.Logger.LogLine($"SAVE ERROR: {ex}");
+            throw;
+        }
 
         return new APIGatewayHttpApiV2ProxyResponse
         {

@@ -16,10 +16,11 @@
   "framework": "net10.0",
   "function-name": "ddac-js-inquiry",
   "package-type": "Zip",
-  "function-role": "arn:aws:iam::221181440679:role/LabRole",
-  "function-subnets": "",
-  "function-security-groups": "",
+  "function-role": "arn:aws:iam::183364521779:role/ddac-lambda-role",
+  "function-subnets": "subnet-041ae18c80f75c7be,subnet-07080c9ec5f922771",
+  "function-security-groups": "sg-010f756aeddd7051f",
   "tracing-mode": "Active",
-  "environment-variables": "",
-  "image-tag": ""
+  "environment-variables": "\u0022ConnectionStrings__DefaultConnection\u0022=\u0022Server=ddac-rds.cixuca6gwirw.us-east-1.rds.amazonaws.com,1433;Database=DDAC;User Id=admin;Password=password123;TrustServerCertificate=True;\u0022",
+  "image-tag": "",
+  "function-description": ""
 }

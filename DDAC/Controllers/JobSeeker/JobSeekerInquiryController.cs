@@ -9,10 +9,27 @@ namespace DDAC.Controllers
     public class InquiryController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly HttpClient _httpClient;
+        private readonly string _inquiryApiUrl;
+        private readonly string _guidanceApiUrl;
 
-        public InquiryController(ApplicationDbContext context)
+        public InquiryController(
+            ApplicationDbContext context,
+            HttpClient httpClient,
+            IConfiguration configuration)
         {
             _context = context;
+            _httpClient = httpClient;
+
+            _inquiryApiUrl =
+                configuration["ApiSettings:InquiryApiUrl"]
+                ?? throw new InvalidOperationException(
+                    "Inquiry API URL is not configured.");
+
+            _guidanceApiUrl =
+                configuration["ApiSettings:GuidanceApiUrl"]
+                ?? throw new InvalidOperationException(
+                    "Guidance API URL is not configured.");
         }
 
         [HttpGet]
@@ -28,7 +45,7 @@ namespace DDAC.Controllers
             await LoadAdvisors();
 
             return View(
-                "~/Views/JobSeeker/SubmitInquiry.cshtml",
+                "~/Views/JobSeeker/CareerSupport.cshtml",
                 new Inquiry()
             );
         }
@@ -46,22 +63,45 @@ namespace DDAC.Controllers
             }
 
             inquiry.UserID = userId.Value;
-            inquiry.Status = "Open";
-            inquiry.CreatedDate = DateTime.Now;
 
             if (!ModelState.IsValid)
             {
                 await LoadAdvisors();
 
                 return View(
-                    "~/Views/JobSeeker/SubmitInquiry.cshtml",
+                    "~/Views/JobSeeker/CareerSupport.cshtml",
                     inquiry
                 );
             }
 
-            _context.Inquiries.Add(inquiry);
+            Console.WriteLine("INQUIRY POST START");
 
-            await _context.SaveChangesAsync();
+            var response = await _httpClient.PostAsJsonAsync(
+                _inquiryApiUrl,
+                inquiry);
+
+            Console.WriteLine("INQUIRY API CALL COMPLETED");
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(
+                $"Inquiry API Status: {(int)response.StatusCode} {response.StatusCode}");
+
+            Console.WriteLine(
+                $"Inquiry API Response: {responseBody}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["InquiryError"] =
+                    "Unable to submit your inquiry. Please try again.";
+
+                await LoadAdvisors();
+
+                return View(
+                    "~/Views/JobSeeker/CareerSupport.cshtml",
+                    inquiry
+                );
+            }
 
             TempData["InquirySuccess"] =
                 "Your inquiry has been submitted successfully.";
@@ -127,7 +167,7 @@ namespace DDAC.Controllers
                     .ToListAsync();
 
             return View(
-                "~/Views/JobSeeker/CareerGuidance.cshtml",
+                "~/Views/JobSeeker/MyRequests.cshtml",
                 new CareerGuidance
                 {
                     JobSeekerID = userId.Value,
@@ -151,8 +191,6 @@ namespace DDAC.Controllers
             }
 
             guidance.JobSeekerID = userId.Value;
-            guidance.GuidanceDate = DateTime.Now;
-            guidance.Status = "Requested";
 
             if (!ModelState.IsValid)
             {
@@ -165,14 +203,33 @@ namespace DDAC.Controllers
                         .ToListAsync();
 
                 return View(
-                    "~/Views/JobSeeker/CareerGuidance.cshtml",
+                    "~/Views/JobSeeker/CareerSupport.cshtml",
                     guidance
                 );
             }
 
-            _context.CareerGuidances.Add(guidance);
+            var response = await _httpClient.PostAsJsonAsync(
+                _guidanceApiUrl,
+                guidance);
 
-            await _context.SaveChangesAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["GuidanceError"] =
+                    "Unable to submit your career guidance request. Please try again.";
+
+                await LoadAdvisors();
+
+                ViewBag.Recommendations =
+                    await _context.CareerRecommendations
+                        .Where(r => r.JobSeekerID == userId.Value)
+                        .OrderByDescending(r => r.DateCreated)
+                        .ToListAsync();
+
+                return View(
+                    "~/Views/JobSeeker/CareerSupport.cshtml",
+                    guidance
+                );
+            }
 
             TempData["GuidanceSuccess"] =
                 "Your career guidance request has been submitted successfully.";
@@ -205,7 +262,6 @@ namespace DDAC.Controllers
                 .OrderByDescending(g => g.GuidanceDate)
                 .ToListAsync();
 
-            // Load advisor names
             var advisors = await _context.CareerAdvisorProfiles
                 .Include(a => a.User)
                 .ToListAsync();
@@ -278,13 +334,7 @@ namespace DDAC.Controllers
                             a.User.Status == "Active")
                 .ToListAsync();
 
-            ViewBag.Advisors = advisors
-                .Select(a => new SelectListItem
-                {
-                    Value = a.AdvisorID.ToString(),
-                    Text = a.User!.FullName
-                })
-                .ToList();
+            ViewBag.Advisors = advisors;
         }
     }
 }

@@ -16,11 +16,11 @@
   "framework": "net10.0",
   "function-name": "ddac-js-jobapplication",
   "package-type": "Zip",
-  "function-role": "arn:aws:iam::221181440679:role/LabRole",
-  "function-subnets": "subnet-09c4aa79bea2c944b,subnet-00fa125ea6873c580",
-  "function-security-groups": "sg-057fed3770789add0",
+  "function-role": "arn:aws:iam::183364521779:role/ddac-lambda-role",
+  "function-subnets": "",
+  "function-security-groups": "",
   "tracing-mode": "Active",
-  "environment-variables": "\u0022SQS_QUEUE_URL\u0022=\u0022https://sqs.us-east-1.amazonaws.com/221181440679/ddac-job-application-queue\u0022;\u0022ConnectionStrings__DefaultConnection\u0022=\u0022Server=ddac-assignment-rds.ckttvgpuhija.us-east-1.rds.amazonaws.com,1433;Database=DDAC;User Id=admin;Password=password123;TrustServerCertificate=True;\u0022",
+  "environment-variables": "\u0022SQS_QUEUE_URL\u0022=\u0022https://sqs.us-east-1.amazonaws.com/183364521779/ddac-job-application-queue\u0022",
   "image-tag": "",
   "function-description": ""
 }

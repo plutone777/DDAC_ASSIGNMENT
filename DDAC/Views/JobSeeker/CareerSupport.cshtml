@@ -1,8 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Career Support";
 
-    var recommendations = ViewBag.Recommendations
-        as IEnumerable<DDAC.Models.CareerRecommendation>;
+var recommendations = ViewBag.Recommendations
+    as IEnumerable<DDAC.Models.CareerRecommendation>;
+
 }
 
 @section Styles {
@@ -28,7 +29,7 @@
 
         </div>
 
-        @if (TempData["InquirySuccess"] != null)
+        @* @if (TempData["InquirySuccess"] != null)
         {
             <div class="success-message">
                 @TempData["InquirySuccess"]
@@ -40,7 +41,7 @@
             <div class="success-message">
                 @TempData["GuidanceSuccess"]
             </div>
-        }
+        } *@
 
         <div class="content-card card-padding"
              style="margin-bottom: 25px;">
@@ -140,8 +141,8 @@
 
                             @foreach (var advisor in ViewBag.Advisors)
                             {
-                                <option value="@advisor.Value">
-                                    @advisor.Text
+                                <option value="@advisor.AdvisorID">
+                                    @advisor.User.FullName
                                 </option>
                             }
 
@@ -226,8 +227,8 @@
 
                             @foreach (var advisor in ViewBag.Advisors)
                             {
-                                <option value="@advisor.Value">
-                                    @advisor.Text
+                                <option value="@advisor.AdvisorID">
+                                    @advisor.User.FullName
                                 </option>
                             }
 
@@ -333,7 +334,6 @@
 
 </div>
 
-
 @section Scripts {
 
     <script>
@@ -362,5 +362,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
 }

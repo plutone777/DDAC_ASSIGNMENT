@@ -32,8 +32,16 @@ public class Function
         APIGatewayHttpApiV2ProxyRequest request,
         ILambdaContext context)
     {
+        context.Logger.LogLine(
+            $"RAW REQUEST BODY: {request.Body}");
+
         var applicationRequest =
-            JsonSerializer.Deserialize<JobApplicationRequest>(request.Body);
+            JsonSerializer.Deserialize<JobApplicationRequest>(
+                request.Body,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
         if (applicationRequest == null)
         {
@@ -56,7 +64,7 @@ public class Function
         await _sqsClient.SendMessageAsync(sendRequest);
 
         context.Logger.LogLine(
-            "Job application message sent to SQS.");
+            $"Job application message sent to SQS. JobID={applicationRequest.JobID}, JobSeekerID={applicationRequest.JobSeekerID}");
 
         return new APIGatewayHttpApiV2ProxyResponse
         {

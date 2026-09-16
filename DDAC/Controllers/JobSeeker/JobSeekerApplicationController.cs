@@ -3,6 +3,7 @@ using DDAC.Models;
 using DDAC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Json;
 
 namespace DDAC.Controllers
 {
@@ -10,13 +11,23 @@ namespace DDAC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly JobApplicationService _jobApplicationService;
+        private readonly HttpClient _httpClient;
+        private readonly string _jobApplicationApiUrl;
 
         public JobSeekerApplicationController(
             ApplicationDbContext context,
-            JobApplicationService jobApplicationService)
+            JobApplicationService jobApplicationService,
+            HttpClient httpClient,
+            IConfiguration configuration)
         {
             _context = context;
             _jobApplicationService = jobApplicationService;
+            _httpClient = httpClient;
+
+            _jobApplicationApiUrl =
+                configuration["ApiSettings:JobApplicationApiUrl"]
+                ?? throw new InvalidOperationException(
+                    "Job application API URL is not configured.");
         }
 
         [HttpGet]
@@ -97,50 +108,29 @@ namespace DDAC.Controllers
         {
             var jobSeekerId = GetCurrentJobSeekerId();
 
+            System.Diagnostics.Debug.WriteLine(
+                $"POST Apply: jobId={jobId}, jobSeekerId={jobSeekerId}");
+
             if (jobSeekerId == null)
             {
                 return RedirectToAction("Login", "User");
             }
 
-            var result = await _jobApplicationService.SubmitApplicationAsync(
-                jobSeekerId.Value,
-                jobId,
-                coverLetter);
-
-            if (!result.Success)
+            var request = new
             {
-                if (string.IsNullOrWhiteSpace(coverLetter))
-                {
-                    var job = await _context.JobVacancies
-                        .FirstOrDefaultAsync(j => j.JobID == jobId);
+                JobID = jobId,
+                JobSeekerID = jobSeekerId.Value,
+                CoverLetter = coverLetter
+            };
 
-                    var profile = await _context.JobSeekerProfiles
-                        .FirstOrDefaultAsync(p =>
-                            p.JobSeekerID == jobSeekerId.Value);
+            var response = await _httpClient.PostAsJsonAsync(
+                _jobApplicationApiUrl,
+                request);
 
-                    if (job == null)
-                    {
-                        return NotFound();
-                    }
-
-                    ViewBag.Job = job;
-                    ViewBag.ResumeURL = profile?.ResumeURL;
-
-                    ModelState.AddModelError(
-                        "CoverLetter",
-                        result.Message);
-
-                    return View(
-                        "~/Views/JobSeeker/ApplyJob.cshtml",
-                        new JobApplication
-                        {
-                            JobID = jobId,
-                            JobSeekerID = jobSeekerId.Value,
-                            CoverLetter = coverLetter
-                        });
-                }
-
-                TempData["ApplicationError"] = result.Message;
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["ApplicationError"] =
+                    "Unable to submit your application. Please try again.";
 
                 return RedirectToAction(
                     "JobDetails",
